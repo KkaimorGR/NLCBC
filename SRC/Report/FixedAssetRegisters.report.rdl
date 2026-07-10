@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
+    </DataSource>
+  </DataSources>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <Height>2in</Height>
+        <Style />
+      </Body>
+      <Width>6.5in</Width>
+      <Page>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <Code>Public Function BlankZero(ByVal Value As Decimal)
+    if Value = 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankPos(ByVal Value As Decimal)
+    if Value &gt; 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankZeroAndPos(ByVal Value As Decimal)
+    if Value &gt;= 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankNeg(ByVal Value As Decimal)
+    if Value &lt; 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankNegAndZero(ByVal Value As Decimal)
+    if Value &lt;= 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+</Code>
+  <Language>=User!Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>0eeb6585-38ae-40f1-885b-8d50088d51b4</rd:ReportID>
+  <DataSets>
+    <DataSet Name="DataSet_Result">
+      <Fields>
+        <Field Name="No_">
+          <DataField>No_</DataField>
+        </Field>
+        <Field Name="Description">
+          <DataField>Description</DataField>
+        </Field>
+        <Field Name="Make_Model">
+          <DataField>Make_Model</DataField>
+        </Field>
+        <Field Name="Search_Description">
+          <DataField>Search_Description</DataField>
+        </Field>
+        <Field Name="Description_2">
+          <DataField>Description_2</DataField>
+        </Field>
+        <Field Name="FA_Class_Code">
+          <DataField>FA_Class_Code</DataField>
+        </Field>
+        <Field Name="Date_of_Delivery_Installation">
+          <DataField>Date_of_Delivery_Installation</DataField>
+        </Field>
+        <Field Name="Serial_No_">
+          <DataField>Serial_No_</DataField>
+        </Field>
+        <Field Name="Condition">
+          <DataField>Condition</DataField>
+        </Field>
+        <Field Name="Financed_By">
+          <DataField>Financed_By</DataField>
+        </Field>
+        <Field Name="Global_Dimension_1_Code">
+          <DataField>Global_Dimension_1_Code</DataField>
+        </Field>
+        <Field Name="Global_Dimension_2_Code">
+          <DataField>Global_Dimension_2_Code</DataField>
+        </Field>
+        <Field Name="Vendor_No_">
+          <DataField>Vendor_No_</DataField>
+        </Field>
+        <Field Name="Warranty_Date">
+          <DataField>Warranty_Date</DataField>
+        </Field>
+        <Field Name="Responsible_Employee">
+          <DataField>Responsible_Employee</DataField>
+        </Field>
+        <Field Name="Insured">
+          <DataField>Insured</DataField>
+        </Field>
+        <Field Name="Acquired">
+          <DataField>Acquired</DataField>
+        </Field>
+        <Field Name="Donated">
+          <DataField>Donated</DataField>
+        </Field>
+        <Field Name="Asset_Type">
+          <DataField>Asset_Type</DataField>
+        </Field>
+        <Field Name="Fixed_Asset_Type">
+          <DataField>Fixed_Asset_Type</DataField>
+        </Field>
+        <Field Name="Tagging_No">
+          <DataField>Tagging_No</DataField>
+        </Field>
+        <Field Name="Location_Name">
+          <DataField>Location_Name</DataField>
+        </Field>
+        <Field Name="FA_Location_Code">
+          <DataField>FA_Location_Code</DataField>
+        </Field>
+        <Field Name="County_Name">
+          <DataField>County_Name</DataField>
+        </Field>
+        <Field Name="Notes_Remarks">
+          <DataField>Notes_Remarks</DataField>
+        </Field>
+        <Field Name="Amount">
+          <DataField>Amount</DataField>
+        </Field>
+        <Field Name="AmountFormat">
+          <DataField>AmountFormat</DataField>
+        </Field>
+        <Field Name="DepRate">
+          <DataField>DepRate</DataField>
+        </Field>
+        <Field Name="DepRateFormat">
+          <DataField>DepRateFormat</DataField>
+        </Field>
+        <Field Name="AnnualDep">
+          <DataField>AnnualDep</DataField>
+        </Field>
+        <Field Name="AnnualDepFormat">
+          <DataField>AnnualDepFormat</DataField>
+        </Field>
+        <Field Name="AccDepre">
+          <DataField>AccDepre</DataField>
+        </Field>
+        <Field Name="AccDepreFormat">
+          <DataField>AccDepreFormat</DataField>
+        </Field>
+        <Field Name="NetBookValue">
+          <DataField>NetBookValue</DataField>
+        </Field>
+        <Field Name="NetBookValueFormat">
+          <DataField>NetBookValueFormat</DataField>
+        </Field>
+        <Field Name="Picture">
+          <DataField>Picture</DataField>
+        </Field>
+        <Field Name="Name">
+          <DataField>Name</DataField>
+        </Field>
+        <Field Name="Address">
+          <DataField>Address</DataField>
+        </Field>
+        <Field Name="Adress2">
+          <DataField>Adress2</DataField>
+        </Field>
+        <Field Name="YearOfPurchase">
+          <DataField>YearOfPurchase</DataField>
+        </Field>
+        <Field Name="DisposalDate">
+          <DataField>DisposalDate</DataField>
+        </Field>
+        <Field Name="DisposalValue">
+          <DataField>DisposalValue</DataField>
+        </Field>
+        <Field Name="DisposalValueFormat">
+          <DataField>DisposalValueFormat</DataField>
+        </Field>
+        <Field Name="EmployeeName">
+          <DataField>EmployeeName</DataField>
+        </Field>
+        <Field Name="Category_Name">
+          <DataField>Category_Name</DataField>
+        </Field>
+        <Field Name="Prelocation">
+          <DataField>Prelocation</DataField>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>DataSource</DataSourceName>
+        <CommandText />
+      </Query>
+    </DataSet>
+  </DataSets>
+</Report>
