@@ -1,0 +1,64 @@
+
+table 52193669 "Farmer Purchase Broker Setup"
+{
+    Caption = 'Farmer Purchase Broker Setup';
+    DataClassification = CustomerContent;
+    fields
+    {
+        field(1; "Witholding Tax Rate (%)"; Decimal)
+        {
+            Editable = false;
+            Caption = 'Witholding Tax Rate (%)';
+        }
+        field(2; "Witholding Tax Account"; Code[20])
+        {
+            Editable = false;
+            NotBlank = true;
+            Caption = 'Witholding Tax Account';
+            //TableRelation = Table0;
+        }
+        field(3; "Brokerage Charge Code"; Code[20])
+        {
+            NotBlank = true;
+            TableRelation = "Item Charge"."No.";
+            Caption = 'Brokerage Charge Code';
+        }
+        field(4; "Primary Key"; Code[10])
+        {
+            Caption = 'Primary Key';
+        }
+        field(5; "Broker Rate in KES Per Bag"; Decimal)
+        {
+            Caption = 'Broker Rate in KES Per Bag';
+        }
+        field(6; "Min. Brokerage Amnt Taxable"; Decimal)
+        {
+            Caption = 'Min. Brokerage Amnt Taxable';
+        }
+        field(7; "Withholding Tax Code"; Code[20])
+        {
+            TableRelation = "Tariff Codes".Code;
+            Caption = 'Withholding Tax Code';
+            trigger OnValidate()
+            begin
+                TCode.Reset();
+                TCode.Get("Withholding Tax Code");
+                "Witholding Tax Rate (%)" := TCode.Percentage;
+                "Witholding Tax Account" := TCode."Account No.";
+            end;
+        }
+    }
+
+    keys
+    {
+        key(Key1; "Primary Key")
+        {
+            Clustered = true;
+        }
+    }
+
+    fieldgroups { }
+
+    var
+        TCode: Record "Tariff Codes";
+}

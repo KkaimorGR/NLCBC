@@ -1,0 +1,69 @@
+
+report 52193582 "Unqualified Applicants"
+{
+    DefaultLayout = RDLC;
+    RDLCLayout = './Layouts/Unqualified Applicants.rdlc';
+    Caption = 'HR Job Applications - Shortlisted';
+    UsageCategory = ReportsAndAnalysis;
+    ApplicationArea = All;
+
+    dataset
+    {
+        dataitem("HR Job Applications"; "HR Job Applications")
+        {
+            DataItemTableView = where(Qualified = const(false));
+            RequestFilterFields = "Job Application No.", "Employee Requisition No", Qualified, Gender, County;
+            column(ReportForNavId_1; 1) { }
+            column(JobApplicationNo_HRJobApplications; "HR Job Applications"."Job Application No.") { }
+            column(FirstName_HRJobApplications; "HR Job Applications"."First Name") { }
+            column(MiddleName_HRJobApplications; "HR Job Applications"."Middle Name") { }
+            column(LastName_HRJobApplications; "HR Job Applications"."Last Name") { }
+            column(Gender_HRJobApplications; "HR Job Applications".Gender) { }
+            column(IDNumber_HRJobApplications; "HR Job Applications"."ID Number") { }
+            column(CellPhoneNumber_HRJobApplications; "HR Job Applications"."Cell Phone Number") { }
+            column(AppliedFilters; AppliedFilters) { }
+            column(JobDesc; JobDesc) { }
+            column(CompInfoPicture; CompInfo.Picture) { }
+            column(CounterVar; CounterVar) { }
+
+            trigger OnAfterGetRecord()
+            begin
+                CounterVar += 1;
+
+                HRJobs.Reset();
+                if HRJobs.Get("HR Job Applications"."Job Applied For") then
+                    JobDesc := UpperCase(HRJobs."Job Description");
+            end;
+        }
+    }
+
+    requestpage
+    {
+
+        layout { }
+
+        actions { }
+    }
+
+    labels { }
+
+    trigger OnPreReport()
+    begin
+        CompInfo.Reset();
+        CompInfo.Get();
+        CompInfo.CalcFields(CompInfo.Picture);
+        JobDesc := '';
+
+        if "HR Job Applications".GetFilter("HR Job Applications"."Employee Requisition No") = '' then
+            Error('Please select Employee Requisition No. for respective Job ID');
+        AppliedFilters := "HR Job Applications".GetFilters;
+        CounterVar := 0;
+    end;
+
+    var
+        CompInfo: Record "Company Information";
+        AppliedFilters: Text;
+        HRJobs: Record "HR Jobs";
+        JobDesc: Text;
+        CounterVar: Integer;
+}
