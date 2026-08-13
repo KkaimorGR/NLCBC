@@ -65,7 +65,7 @@ page 52193764 "Salary Advance Line"
                 {
                     ApplicationArea = Basic;
                     Caption = 'Gross Pay';
-                    Editable = false;
+                    Enabled = false;
                     ToolTip = 'Specifies the value of the Gross Pay field.';
                 }
 
@@ -73,13 +73,13 @@ page 52193764 "Salary Advance Line"
                 {
                     ApplicationArea = Basic;
                     Caption = '3* Gross Pay';
-                    Editable = false;
+                    Enabled = false;
                     ToolTip = 'Specifies the value of the 3* Gross Pay field.';
                 }
                 field(Status; Rec.Status)
                 {
                     ApplicationArea = Basic;
-                    Visible = false;
+                    Enabled = false;
                     ToolTip = 'Specifies the value of the Status field.';
                 }
                 field("No.of Months to Repay"; Rec."No.of Months to Repay")

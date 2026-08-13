@@ -12,6 +12,7 @@ table 52193576 "HR Appraisal Header"
         field(2; Supervisor; Text[100])
         {
             Editable = true;
+            TableRelation = "HR Employees"."No.";
             Caption = 'Supervisor';
             trigger OnValidate()
             begin

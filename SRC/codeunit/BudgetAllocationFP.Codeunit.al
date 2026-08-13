@@ -15,7 +15,7 @@ codeunit 50005 "Budget Allocation FP"
         Amnt: Decimal;
         EntryNo: Integer;
         GL: Record Item;
-        cUATR: RECORD Customer;
+        CustomerRec: RECORD Customer;
     begin
 
         /*{

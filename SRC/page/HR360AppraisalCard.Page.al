@@ -5,7 +5,8 @@ page 52194284 "HR 360 Appraisal Card"
     PromotedActionCategories = 'New,Process,Reports,Functions,Appraisal,Workflow Process,Document Attachment';
     SourceTable = "HR Appraisal Header";
     ApplicationArea = All;
-    // Editable = false;
+
+    InsertAllowed = false;
     Caption = 'HR 360 Appraisal Card';
     layout
     {
@@ -155,7 +156,7 @@ page 52194284 "HR 360 Appraisal Card"
                 field(Status; Rec.Status)
                 {
                     ApplicationArea = Basic;
-                    Editable = true;
+                    Editable = false;
                     Importance = Promoted;
                     ToolTip = 'Specifies the value of the Status field.';
                 }
