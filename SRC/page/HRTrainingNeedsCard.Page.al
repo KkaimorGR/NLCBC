@@ -81,7 +81,7 @@ page 52194246 "HR Training Needs Card"
                     var
                         myInt: Integer;
                     begin
-                        rec.TestField("Course Description");
+                        // rec.TestField("Course Description");
                     end;
                 }
                 field("Re-Assessment Date"; Rec."Re-Assessment Date")

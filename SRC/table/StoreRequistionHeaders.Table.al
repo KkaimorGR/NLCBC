@@ -147,15 +147,19 @@ Table 52193901 "Store Requistion Headers"
             trigger OnValidate()
             var
                 FSetup: Record "FA Setup";
+                GenJournalBatch: Record "Item Journal Batch";
                 ApprovalEntry: Record "Approval Entry";
                 ItemsRec: Record Item;
                 TLed: Integer;
                 GenJ: Codeunit "Gen. Jnl.-Post";
                 GenJnlineREC: Record "Item Journal Line";
                 PostEntry: Record "Post Value Entry to G/L";
+                ItemJnlBatch: Record "Item Journal Batch";
+                FAJnlBatch: Record "FA Journal Batch";
             begin
 
                 //if not GuiAllowed then exit;
+
                 if rec.Status = rec.Status::Released then begin
                     ApprovalEntry.Reset();
                     ApprovalEntry.SetRange("Document No.", rec."No.");
@@ -164,6 +168,13 @@ Table 52193901 "Store Requistion Headers"
                 end;
                 if "Action Type" = "action type"::Asset then begin
                     if Status = Status::Released then begin
+                        FAJnlBatch.RESET;
+                        FAJnlBatch.SETRANGE("Journal Template Name", 'ASSETS');
+                        FAJnlBatch.SETRANGE(Name, 'ACQ');
+                        if FAJnlBatch.FindSet() then
+                            FAJnlBatch.DeleteAll();
+                        FnCreatefAJournalBatch('ASSETS', 'ACQ');
+
 
                         // SReqLines.SetRange(SReqLines./"Requistion No", "No.");
                         //SReqLines.SETRANGE("Asset Code",SReqLines."Asset Code");
@@ -289,7 +300,7 @@ Table 52193901 "Store Requistion Headers"
                                             GenJnlines.Init;
                                             GenJnlines."Journal Template Name" := 'ASSETS';
                                             GenJnlines."Journal Batch Name" := 'ACQ';
-                                            GenJnlines."Line No." := LineNoRec;
+                                            GenJnlines."Line No." := LineNoRec + 1;
                                             //GenJnline."Account Type":=GenJnline."Account Type"::"Fixed Asset";
                                             GenJnlines."Document No." := "No.";
                                             if StoreRequistionLine.Quantity = 0 then
@@ -310,12 +321,12 @@ Table 52193901 "Store Requistion Headers"
                                             // GenJnlines.Description := SReqLines.Description;
                                             GenJnlines.Amount := SReqLines."Line Amount";
                                             GenJnlines."External Document No." := StoreRequistionHeaders."Purchase Order No";
-                                            GenJnlines."Shortcut Dimension 1 Code" := "Global Dimension 1 Code";
-                                            GenJnlines.Validate("Shortcut Dimension 1 Code");
+                                            GenJnlines."Shortcut Dimension 1 Code" := "Responsibility Center";
+                                            // GenJnlines.Validate("Shortcut Dimension 1 Code");
                                             GenJnlines."Shortcut Dimension 2 Code" := "Shortcut Dimension 2 Code";
-                                            GenJnlines.Validate("Shortcut Dimension 2 Code");
+                                            // GenJnlines.Validate("Shortcut Dimension 2 Code");
                                             GenJnlines."Depreciation Book Code" := 'NLC';
-                                            GenJnlines.Insert(true);
+                                            GenJnlines.Insert();
                                             fasset.Reset;
                                             fasset.SetRange(fasset."No.", SReqLines."No.");
                                             if fasset.Find('-') then
@@ -350,8 +361,15 @@ Table 52193901 "Store Requistion Headers"
                             if Status = Status::Released then
                                 //
                                 if InventorySetup.Get then begin
+                                    GenJournalBatch.RESET;
+                                    GenJournalBatch.SETRANGE("Journal Template Name", InventorySetup."Item Jnl Template");
+                                    GenJournalBatch.SETRANGE(Name, InventorySetup."Item Jnl Batch");
+                                    if GenJournalBatch.FindSet() then
+                                        GenJournalBatch.DeleteAll();
                                     InventorySetup.TestField(InventorySetup."Item Jnl Template");
                                     InventorySetup.TestField(InventorySetup."Item Jnl Batch");
+                                    FnCreateItemJournalBatch(InventorySetup."Item Jnl Template", InventorySetup."Item Jnl Batch");
+
                                     GenJnline.Reset;
                                     GenJnline.SetRange(GenJnline."Journal Template Name", InventorySetup."Item Jnl Template");
                                     GenJnline.SetRange(GenJnline."Journal Batch Name", InventorySetup."Item Jnl Batch");
@@ -378,10 +396,11 @@ Table 52193901 "Store Requistion Headers"
                                             // if GenJnline.FindSet() then
                                             TLed := GenJnlineREC.Count;
                                             TLed := TLed + 1;
+
                                             GenJnline.Init;
                                             GenJnline."Journal Template Name" := InventorySetup."Item Jnl Template";
                                             GenJnline."Journal Batch Name" := InventorySetup."Item Jnl Batch";
-                                            GenJnline."Line No." := TLed;
+                                            GenJnline."Line No." := TLed + 12;
                                             GenJnline."Posting Date" := Today;
                                             GenJnline."Entry Type" := GenJnline."entry type"::"Positive Adjmt.";
                                             GenJnline."Document No." := "No.";
@@ -414,18 +433,18 @@ Table 52193901 "Store Requistion Headers"
                                             GenJnline."Unit Amount" := ReqLine."Unit Cost";
                                             GenJnline.Amount := ReqLine."Line Amount";
 
-                                            GenJnline."Shortcut Dimension 1 Code" := "Global Dimension 1 Code";
-                                            GenJnline.Validate("Shortcut Dimension 1 Code");
-                                            GenJnline."Shortcut Dimension 2 Code" := "Shortcut Dimension 2 Code";
-                                            GenJnline.Validate("Shortcut Dimension 2 Code");
-                                            GenJnline.ValidateShortcutDimCode(3, "Shortcut Dimension 3 Code");
-                                            GenJnline.ValidateShortcutDimCode(4, "Shortcut Dimension 4 Code");
+                                            // GenJnline."Shortcut Dimension 1 Code" := "Responsibility Center";
+                                            // GenJnline.Validate("Shortcut Dimension 1 Code");
+                                            // GenJnline."Shortcut Dimension 2 Code" := "Shortcut Dimension 2 Code";
+                                            // GenJnline.Validate("Shortcut Dimension 2 Code");
+                                            // GenJnline.ValidateShortcutDimCode(3, "Shortcut Dimension 3 Code");
+                                            // GenJnline.ValidateShortcutDimCode(4, "Shortcut Dimension 4 Code");
                                             // GenJnline.Validate(Quantity);
                                             GenJnline.Validate("Unit Amount");
 
                                             //GenJnline."Reason Code":='221';
                                             //GenJnline.VALIDATE("Reason Code");
-                                            GenJnline.Insert(true);
+                                            GenJnline.Insert();
 
                                         //ReqLine."Request Status":=ReqLine."Request Status"::Closed;
 
@@ -498,8 +517,8 @@ Table 52193901 "Store Requistion Headers"
                 //                             GenJnline."Unit Amount" := ReqLine."Unit Cost";
                 //                             GenJnline.Amount := ReqLine."Line Amount";
 
-                //                             GenJnline."Shortcut Dimension 1 Code" := "Global Dimension 1 Code";
-                //                             GenJnline.Validate("Shortcut Dimension 1 Code");
+                //                             GenJnline."Shortcut Dimension 1 Code" := respo;
+                // GenJnline.Validate("Shortcut Dimension 1 Code");
                 //                             GenJnline."Shortcut Dimension 2 Code" := "Shortcut Dimension 2 Code";
                 //                             GenJnline.Validate("Shortcut Dimension 2 Code");
                 //                             GenJnline.ValidateShortcutDimCode(3, "Shortcut Dimension 3 Code");
@@ -581,8 +600,8 @@ Table 52193901 "Store Requistion Headers"
         }
         field(31; "Global Dimension 1 Code"; Code[20])
         {
-            CaptionClass = '1,1,1';
-            Caption = 'Global Dimension 1 Code';
+
+            Caption = 'County';
             Description = 'Stores the reference to the first global dimension in the database';
             NotBlank = false;
             TableRelation = "Dimension Value".Code where("Global Dimension No." = const(1));
@@ -595,13 +614,13 @@ Table 52193901 "Store Requistion Headers"
                 if Dimval.Find('-') then
                     "Function Name" := Dimval.Name;
 
-                ValidateShortcutDimCode(1, "Global Dimension 1 Code");
+                // ValidateShortcutDimCode(1, "Global Dimension 1 Code");
             end;
         }
         field(56; "Shortcut Dimension 2 Code"; Code[20])
         {
-            CaptionClass = '1,2,2';
-            // Caption = 'Shortcut Dimension 2 Code';
+
+            Caption = 'Department';
             Description = 'Stores the reference of the second global dimension in the database';
             NotBlank = false;
             TableRelation = "Dimension Value".Code where("Global Dimension No." = const(2));
@@ -614,7 +633,7 @@ Table 52193901 "Store Requistion Headers"
                 if Dimval.Find('-') then
                     "Budget Center Name" := Dimval.Name;
 
-                ValidateShortcutDimCode(2, "Shortcut Dimension 2 Code");
+                // ValidateShortcutDimCode(2, "Shortcut Dimension 2 Code");
             end;
         }
         field(57; "Function Name"; Text[100])
@@ -1414,6 +1433,43 @@ Table 52193901 "Store Requistion Headers"
             LastLineNum := SRLines."Line No." + 1;
         end else begin
             LastLineNum := 1000;
+        end;
+    end;
+
+    procedure FnCreateItemJournalBatch(JournalTemplate: Code[20]; JournalBatch: Code[20])
+    var
+        GenJournalLine: Record "Item Journal Line";
+        GenJournalBatch: Record "Item Journal Batch";
+    begin
+        GenJournalBatch.RESET;
+        GenJournalBatch.SETRANGE("Journal Template Name", JournalTemplate);
+        GenJournalBatch.SETRANGE(Name, JournalBatch);
+        if GenJournalBatch.FINDFIRST then
+            exit
+        else begin
+            GenJournalBatch."Journal Template Name" := JournalTemplate;
+            GenJournalBatch.Name := JournalBatch;
+            GenJournalBatch.Description := 'Batch For ' + FORMAT(JournalBatch);
+            GenJournalBatch.INSERT;
+        end;
+    end;
+    //
+    procedure FnCreatefAJournalBatch(JournalTemplate: Code[20]; JournalBatch: Code[20])
+    var
+        GenJournalLine: Record "Item Journal Line";
+
+        FAJnlBatch: Record "FA Journal Batch";
+    begin
+        FAJnlBatch.RESET;
+        FAJnlBatch.SETRANGE("Journal Template Name", JournalTemplate);
+        FAJnlBatch.SETRANGE(Name, JournalBatch);
+        if FAJnlBatch.FINDFIRST then
+            exit
+        else begin
+            FAJnlBatch."Journal Template Name" := JournalTemplate;
+            FAJnlBatch.Name := JournalBatch;
+            FAJnlBatch.Description := 'Batch For ' + FORMAT(JournalBatch);
+            FAJnlBatch.INSERT;
         end;
     end;
 }

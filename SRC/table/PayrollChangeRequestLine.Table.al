@@ -98,6 +98,7 @@ table 52193662 "Payroll Change Request Line"
                 HrSetup: Record "HR Setup";
                 "Gross Pay": Decimal;
             begin
+                HrSetup.Get();
                 UserSet.Reset();
                 UserSet.SetRange("User ID", UserId);
                 UserSet.SetRange("Modify payroll", true);
@@ -314,6 +315,7 @@ table 52193662 "Payroll Change Request Line"
         field(27; "A Third Basic Pay"; Decimal)
         {
             DataClassification = ToBeClassified;
+            Caption = 'Basic Multiplier';
         }
         field(28; "Emeployee Gross Pay"; Decimal)
         {

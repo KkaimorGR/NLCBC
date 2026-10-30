@@ -559,6 +559,10 @@ page 52193469 "HR Employee Registration Crd"
                     ApplicationArea = Basic;
                     ToolTip = 'Specifies the value of the Incremental Month field.';
                 }
+                field("Deputy Director"; rec."Deputy Director")
+                {
+                    ApplicationArea = all;
+                }
             }
             group("Payment Information")
             {

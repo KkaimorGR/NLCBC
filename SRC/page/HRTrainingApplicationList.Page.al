@@ -23,12 +23,17 @@ page 52194247 "HR Training Application List"
                     ApplicationArea = Basic;
                     ToolTip = 'Specifies the value of the Application Date field.';
                 }
+                field("Training Need"; rec."Training Need")
+                {
+                    ApplicationArea = all;
+                }
                 field("Course Title"; Rec."Course Title")
                 {
                     Editable = true;
                     ApplicationArea = Basic;
                     ToolTip = 'Specifies the value of the Course Title field.';
                 }
+
                 field("Course Description"; Rec."Course Description")
                 {
                     ApplicationArea = Basic;
@@ -160,6 +165,10 @@ page 52194247 "HR Training Application List"
                 {
                     ApplicationArea = Basic;
                     ToolTip = 'Specifies the value of the Entry No field.';
+                }
+                field("Perfomance Code"; rec."Perfomance Code")
+                {
+                    ApplicationArea = all;
                 }
             }
         }

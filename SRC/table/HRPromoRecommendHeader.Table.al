@@ -25,8 +25,10 @@ table 52193508 "HR Promo. Recommend Header"
             begin
                 Hremploy.Reset();
                 Hremploy.SetRange("No.", Rec."Employee No.");
-                if Hremploy.FindFirst() then
+                if Hremploy.FindFirst() then begin
                     Rec."Employee Name" := Hremploy.FullName;
+                    rec."Responsibility Center" := Hremploy."Responsibility Center";
+                end;
             end;
         }
         field(3; "Employee Name"; Text[100])
@@ -154,8 +156,9 @@ table 52193508 "HR Promo. Recommend Header"
                             end;
                         until TransferLines.Next() = 0;
                     end;
+                    Message('Employee details has been validate');
                 end;
-                Message('Employee details has been validate');
+                // 
             end;
         }
         field(9; "No Series"; Code[20])

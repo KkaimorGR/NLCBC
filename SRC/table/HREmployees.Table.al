@@ -2020,6 +2020,10 @@ table 52193433 "HR Employees"
         {
             DataClassification = ToBeClassified;
         }
+        field(400003; "Deputy Director"; Boolean)
+        {
+            Caption = 'Deputy Director';
+        }
 
     }
 

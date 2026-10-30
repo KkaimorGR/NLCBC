@@ -58,6 +58,7 @@ page 52193582 "Asset Return card"
             part(Control9; "Asset Returning Lines")
             {
                 Editable = Line;
+                ApplicationArea = all;
                 // Visible=rec."Document Type"="Document Type"::Returning;
                 SubPageLink = "No." = field("No.");
             }

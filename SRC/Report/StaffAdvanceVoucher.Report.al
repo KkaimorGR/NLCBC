@@ -13,6 +13,24 @@ report 52193759 "Staff Advance Voucher"
             column(ReportForNavId_6437; 6437) { }
             column(Picture; objLogos.Picture) { }
             column(From; "Payments Header".Payee) { }
+            column(Reasons_for_Advance_Amount; "Reasons for Advance Amount")
+            {
+
+            }
+            column(Designation; Designation)
+            {
+
+            }
+            column(Responsibility_Center; "Responsibility Center")
+            {
+
+            }
+            column(Employee_Names; "Employee Names")
+            { }
+            column(Grade; Grade)
+            {
+
+            }
             column(PF; "Payments Header"."Account No.") { }
             column(Project; "Payments Header"."Shortcut Dimension 2 Code") { }
             column(Date; "Payments Header"."Date Posted") { }
@@ -70,6 +88,7 @@ report 52193759 "Staff Advance Voucher"
 
         actions { }
     }
+
 
     labels { }
 

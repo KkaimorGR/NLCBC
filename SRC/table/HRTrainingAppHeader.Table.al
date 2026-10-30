@@ -290,8 +290,16 @@ table 52193496 "HR Training App Header"
                 Trainings.Reset();
                 Trainings.SetRange(Code, Rec."Training Need");
                 if Trainings.FindFirst() then begin
-                    Rec."Course Title" := Trainings."Course Title";
-                    rec.Validate("Course Title");
+                    if Trainings."Course Title" <> '' then begin
+                        Rec."Course Title" := Trainings."Course Title";
+                        rec.Validate("Course Title");
+                    end else begin
+                        "Course Description" := Trainings."Course Description";
+                        "Start Date" := Trainings."Start Date";
+                        "End Date" := Trainings."End Date";
+                        Duration := Trainings.Duration;
+                    end;
+
                 end;
                 rec.CalcFields(rec."Training Cost Cstimated");
                 Estimated := Rec."Training Cost Cstimated";
@@ -300,7 +308,7 @@ table 52193496 "HR Training App Header"
                 // HRTrainingNeeds.SetRange("Course Title", rec."Course Title");
                 HRTrainingNeeds.SetRange(HRTrainingNeeds.Code, rec."Training Need");
                 if HRTrainingNeeds.FindFirst() then begin
-                    "Course Description" := HRTrainingNeeds."Course Description";
+                    "Course Description" := HRTrainingNeeds."Qualification Description";
                     "Start Date" := HRTrainingNeeds."Start Date";
                     "End Date" := HRTrainingNeeds."End Date";
                     Duration := HRTrainingNeeds.Duration;

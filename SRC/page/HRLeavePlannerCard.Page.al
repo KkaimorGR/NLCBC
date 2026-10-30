@@ -52,9 +52,18 @@ page 52193673 "HR Leave Planner Card"
                     ApplicationArea = all;
                     Editable = false;
                 }
+                field("Deputy Director"; rec."Deputy Director")
+                {
+                    ApplicationArea = all;
+                }
                 field(Active; Rec.Active)
                 {
                     ApplicationArea = all;
+                }
+                field("Responsibility Center"; "Responsibility Center")
+                {
+                    ApplicationArea = all;
+                    Caption = 'Department';
                 }
 
             }

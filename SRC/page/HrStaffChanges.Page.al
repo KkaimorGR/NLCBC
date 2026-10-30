@@ -540,6 +540,10 @@ page 52193463 "HR Staff Changes"
                     ApplicationArea = all;
                     Caption = 'Incremental Month';
                 }
+                field("Deputy Director"; "Deputy Director")
+                {
+                    ApplicationArea = all;
+                }
                 field(Acting; Rec.Acting)
                 {
                     ApplicationArea = all;
@@ -1186,6 +1190,41 @@ page 52193463 "HR Staff Changes"
                         VarVariant := Rec;
                         CustomApprovals.OnCancelDocApprovalRequest(VarVariant);
                         CurrPage.Close();
+                    end;
+                }
+                action(UpdateStaff)
+                {
+                    ApplicationArea = Basic;
+                    Caption = 'UpdateStaffcard';
+                    Image = Cancel;
+                    Visible = false;
+                    Promoted = true;
+                    // Enabled = OpenApprovalEntriesExist;
+                    PromotedIsBig = true;
+                    PromotedCategory = Category4;
+                    trigger OnAction()
+                    var
+                        UserSer: Record "User Setup";
+                        HrEmplo: Record "HR Employees";
+                    begin
+                        // if UserId <> 'Landcommission\spadmin' then
+                        //     Error('Insufficient rights');
+                        if not Confirm('Update Employees?') then exit;
+                        HrEmplo.Reset();
+                        HrEmplo.SetRange(Status, Status::Active);
+                        if HrEmplo.FindSet() then begin
+                            repeat
+                                UserSer.Reset();
+                                UserSer.SetRange("User ID", HrEmplo."User ID");
+                                if UserSer.FindFirst() then begin
+                                    UserSer."Employee No." := HrEmplo."No.";
+                                    UserSer.Validate(UserSer."Employee No.");
+                                    UserSer.Modify();
+                                end;
+                            until HrEmplo.Next() = 0;
+                        end;
+                        Message('Done');
+
                     end;
                 }
                 action("Tuskie Ngoma")

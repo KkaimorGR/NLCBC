@@ -475,6 +475,7 @@ table 52193601 "Staff Advance Headers"
                 HREmployee.Reset();
                 HREmployee.SetRange("No.", Rec."Employee No");
                 if HREmployee.FindFirst() then begin
+                    rec.Grade := HREmployee.Grade;
                     "Employee Names" := HREmployee."First Name" + ' ' + HREmployee."Middle Name" + ' ' + HREmployee."Last Name";
                     Validate(rec."Employee Names");
                 end;
@@ -755,6 +756,10 @@ table 52193601 "Staff Advance Headers"
 
                 Validate("No.of Months to Repay")
             end;
+        }
+        field(496; Grade; code[40])
+        {
+            DataClassification = ToBeClassified;
         }
     }
 

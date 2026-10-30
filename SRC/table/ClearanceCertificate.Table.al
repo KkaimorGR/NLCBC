@@ -257,6 +257,7 @@ table 52193489 "Clearance Certificate"
                         rec."Separation No" := EmpployySep."Separation No.";
                         rec."Date Of Leaving" := EmpployySep."Date of Leaving";
                         rec.Grade := HREmp.Grade;
+                        rec."USER ID" := HREmp."User ID";
                         rec.Gender := HREmp.Gender;
                         rec."Reasons Of Leaving" := EmpployySep."Reason for Separation";
                         rec."Responsibility Center" := HREmp."Responsibility Center";

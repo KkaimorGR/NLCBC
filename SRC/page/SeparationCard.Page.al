@@ -57,7 +57,7 @@ page 52193688 "Separation Card"
                 {
                     ApplicationArea = Basic;
                     Editable = false;
-                    Visible = false;
+                    // Visible = false;
                     ToolTip = 'Specifies the value of the Responsibility Center field.';
                 }
                 field("Request Date"; Rec."Request Date")
@@ -91,12 +91,14 @@ page 52193688 "Separation Card"
                 field(Department; Rec.Department)
                 {
                     ApplicationArea = Basic;
+                    Caption = 'Department';
                     // Visible = false;
                     ToolTip = 'Specifies the value of the Department field.';
                 }
                 field("Department Name"; "department Name")
                 {
                     ApplicationArea = all;
+
                     Caption = 'Department Name';
                 }
                 field("HOD Comments"; Rec."HOD Comments")

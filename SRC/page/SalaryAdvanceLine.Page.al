@@ -69,10 +69,10 @@ page 52193764 "Salary Advance Line"
                     ToolTip = 'Specifies the value of the Gross Pay field.';
                 }
 
-                field("3* Gross Pay"; Rec."A Third Basic Pay")
+                field("Miltiplier Gross Pay"; Rec."A Third Basic Pay")
                 {
                     ApplicationArea = Basic;
-                    Caption = '3* Gross Pay';
+                    Caption = 'Miltiplier Gross Pay';
                     Enabled = false;
                     ToolTip = 'Specifies the value of the 3* Gross Pay field.';
                 }

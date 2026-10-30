@@ -34,6 +34,7 @@ codeunit 52193429 "Email Notifications"
             PRSET.TestField("Payroll Email Contact");
             EmailRecepient.Add(PRSET."Payroll Email Contact");
             repeat
+                EmailRecepient.Add(Emp."Company E-Mail");
                 EmailSubject := 'RETIREMENT REMINDER';
                 EmailBody := 'This is to remind you that the Employee: <b> No. ' + Emp."No." + ' - ' + Emp."Full Name" + '</b>, will be Retiring on date: ' + Format(Emp."Retirement date") + '.';
                 EmailMessage.Create(
@@ -55,6 +56,7 @@ codeunit 52193429 "Email Notifications"
             PRSET.TestField("Payroll Email Contact");
             EmailRecepient.Add(PRSET."Payroll Email Contact");
             repeat
+                EmailRecepient.Add(Emp."Company E-Mail");
                 EmailSubject := 'RETIREMENT REMINDER';
                 EmailBody := 'This is to remind you that the Employee: <b> No. ' + Emp."No." + ' - ' + Emp."Full Name" + '</b>, will be Retiring on date: ' + Format(Emp."Retirement date") + '.';
                 EmailMessage.Create(
@@ -76,6 +78,7 @@ codeunit 52193429 "Email Notifications"
             PRSET.TestField("Payroll Email Contact");
             EmailRecepient.Add(PRSET."Payroll Email Contact");
             repeat
+                EmailRecepient.Add(Emp."Company E-Mail");
                 EmailSubject := 'RETIREMENT REMINDER';
                 EmailBody := 'This is to remind you that the Employee: <b> No. ' + Emp."No." + ' - ' + Emp."Full Name" + '</b>, will be Retiring on date: ' + Format(Emp."Retirement date") + '.';
                 EmailMessage.Create(

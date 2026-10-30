@@ -225,6 +225,7 @@ table 50009 "HR Employee Registration"
                         HrEemployeRec."Postal Address" := Rec."Postal Address";
                         HrEemployeRec."Residential Address" := rec."Residential Address";
                         HrEemployeRec.City := Rec.City;
+                        HrEemployeRec."Deputy Director" := rec."Deputy Director";
                         HrEemployeRec.Citizenship := rec.Citizenship;
                         HrEemployeRec."Post Code" := Rec."Post Code";
                         HrEemployeRec."Cell Phone Number" := rec."Cell Phone Number";
@@ -1507,6 +1508,7 @@ table 50009 "HR Employee Registration"
                         HrEemployeRec."First Name" := Rec."First Name";
                         HrEemployeRec."Middle Name" := rec."Middle Name";
                         HrEemployeRec."Last Name" := Rec."Last Name";
+                        HrEemployeRec."Deputy Director" := rec."Deputy Director";
                         HrEemployeRec."Full Name" := rec."Full Name";
                         HrEemployeRec."Employee Type" := rec."Employee Type";
                         HrEemployeRec."Responsibility Center" := rec."Responsibility Center";
@@ -1769,6 +1771,11 @@ table 50009 "HR Employee Registration"
             OptionMembers = Normal,Deployed;
             Caption = 'Employee Type';
         }
+        field(400003; "Deputy Director"; Boolean)
+        {
+            Caption = 'Deputy Director';
+        }
+
 
     }
 

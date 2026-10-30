@@ -78,8 +78,10 @@ Table 52194003 "HR Leave Planner Header"
                 rec."Application Date" := Today;
                 if hremplo.Get(Rec."Employee No") then begin
                     Rec."User ID" := hremplo."User ID";
+                    rec."Responsibility Center" := hremplo."Responsibility Center";
                     Rec.Names := hremplo."Full Name";
                     Rec."Job Tittle" := hremplo."Job Title";
+                    rec."Deputy Director" := hremplo."Deputy Director";
                 end;
             end;
         }
@@ -90,6 +92,8 @@ Table 52194003 "HR Leave Planner Header"
         field(11; "Responsibility Center"; Code[10])
         {
             //TableRelation = Table39005929.Field1;
+            TableRelation = "Responsibility Center BR NEW".Code;
+            Caption = 'Responsibility Center';
         }
         field(13; "Global Dimension 1 Code"; Code[20])
         {
@@ -163,6 +167,11 @@ Table 52194003 "HR Leave Planner Header"
         field(33; Active; Boolean)
         {
             DataClassification = ToBeClassified;
+        }
+        field(34; "Deputy Director"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
         }
 
     }

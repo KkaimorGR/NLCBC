@@ -422,6 +422,10 @@ table 52193524 "HR Setup"
         {
             DataClassification = ToBeClassified;
         }
+        field(8000; "Allow GenerateQR"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
 
 
     }

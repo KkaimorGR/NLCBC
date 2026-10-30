@@ -70,6 +70,7 @@ table 50007 "HR Employee Staff Changes"
                     rec."Reason For Acting" := HrEmpRec."Reason For Acting";
                     rec."NHIF No." := HrEmpRec."NHIF No.";
                     rec."If Acted?" := HrEmpRec."If Acted?";
+                    rec."Deputy Director" := HrEmpRec."Deputy Director";
                     REC."Work Phone Number" := HrEmpRec."Work Phone Number";
                     rec."Home Phone Number" := HrEmpRec."Home Phone Number";
                     rec."Cell Phone Number" := HrEmpRec."Cell Phone Number";
@@ -1784,6 +1785,11 @@ table 50007 "HR Employee Staff Changes"
         {
             DataClassification = ToBeClassified;
         }
+        field(400003; "Deputy Director"; Boolean)
+        {
+            Caption = 'Deputy Director';
+        }
+
 
     }
 
@@ -1928,6 +1934,8 @@ table 50007 "HR Employee Staff Changes"
                 HrEmployeesRec."Contract Type" := Rec."Contract Type";
             if HrEmployeesRec.City <> rec.City then
                 HrEmployeesRec.City := rec.City;
+            if HrEmployeesRec."Deputy Director" <> rec."Deputy Director" then
+                HrEmployeesRec."Deputy Director" := rec."Deputy Director";
             if HrEmployeesRec."Postal Address" <> rec."Postal Address" then
                 HrEmployeesRec."Postal Address" := rec."Postal Address";
             if HrEmployeesRec.Citizenship <> Rec.Citizenship then

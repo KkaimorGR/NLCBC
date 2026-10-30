@@ -615,7 +615,7 @@ page 52193762 "Salary Advance Request Crd"
 
     procedure CurrPageUpdate()
     begin
-        xRec := Rec;
+        //xRec := Rec;
         UpdateControls();
         CurrPage.Update();
     end;

@@ -338,6 +338,8 @@ report 52193485 "Receipt1 Voucher S11"
 
             }
             trigger OnAfterGetRecord()
+            var
+                hrsetup: Record "HR Setup";
 
             begin
                 useerSet.Reset();
@@ -365,7 +367,9 @@ report 52193485 "Receipt1 Voucher S11"
                     Approver := AP."Approver ID";
                     ApprovalDate := AP."Last Date-Time Modified";
                 end;
-                GetQRCodes(StoreRequistionHeaders."No.");
+                hrsetup.get;
+                if hrsetup."Allow GenerateQR" = true then
+                    GetQRCodes(StoreRequistionHeaders."No.");
                 if CashMgnt.Get() then begin
                     CashMgnt.CalcFields("Sender QR Code");
                     CashMgnt.CalcFields("Approver 1 QR Code");

@@ -5,6 +5,7 @@ Page 52193502 "Items Requsition Lines"
     PageType = ListPart;
     SaveValues = true;
     DeleteAllowed = true;
+    UsageCategory = Lists;
     SourceTable = "Store Requisition TT Line";
 
     layout

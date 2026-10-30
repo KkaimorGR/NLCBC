@@ -382,6 +382,7 @@ page 52193636 "HR Employee List (ALL)"
                 Promoted = true;
                 PromotedCategory = Category5;
                 PromotedIsBig = true;
+
                 PromotedOnly = true;
                 ToolTip = 'Executes the Update Salary Increments action.';
                 trigger OnAction()
@@ -552,7 +553,7 @@ page 52193636 "HR Employee List (ALL)"
                 Promoted = true;
                 PromotedCategory = Category5;
                 PromotedIsBig = true;
-                //Visible = false;
+                Visible = false;
                 ToolTip = 'Executes the Update Basic Pay action.';
                 trigger OnAction()
                 begin
@@ -626,6 +627,7 @@ page 52193636 "HR Employee List (ALL)"
                     Image = Customer;
                     Promoted = true;
                     PromotedCategory = Category6;
+                    Visible = false;
                     PromotedIsBig = true;
                     ToolTip = 'Executes the Set In-Active action.';
                     trigger OnAction()
@@ -646,26 +648,7 @@ page 52193636 "HR Employee List (ALL)"
                     RunObject = page "HR Employment History";
                     ToolTip = 'Executes the Staff historical Data action.';
                 }
-                action("Update Age")
-                {
-                    ApplicationArea = Basic;
-                    Image = UpdateUnitCost;
-                    Promoted = true;
-                    PromotedCategory = Category5;
-                    PromotedIsBig = true;
-                    Visible = false;
-                    ToolTip = 'Executes the Update Age action.';
-                    trigger OnAction()
-                    begin
 
-
-                        HREmp.Reset();
-                        if HREmp.FindSet() then
-                            repeat
-                            until HREmp.Next() = 0;
-                        Message('done');
-                    end;
-                }
             }
         }
     }

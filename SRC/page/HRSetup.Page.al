@@ -69,6 +69,10 @@ page 52193696 "HR Setup"
                 {
                     ApplicationArea = all;
                 }
+                field("Allow GenerateQR"; rec."Allow GenerateQR")
+                {
+                    ApplicationArea = all;
+                }
             }
             group(Numbering)
             {

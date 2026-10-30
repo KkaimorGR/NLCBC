@@ -74,6 +74,16 @@ page 52194249 "HR Training Application Header"
                     ApplicationArea = Basic;
                     ToolTip = 'Specifies the value of the Training Venue field.';
                 }
+                field("Employee No_"; Rec."Employee No_")
+                {
+                    ApplicationArea = Basic;
+                    ToolTip = 'Specifies the value of the Employee No_ field.';
+                }
+                field(UserId; Rec.UserId)
+                {
+                    ApplicationArea = Basic;
+                    ToolTip = 'Specifies the value of the UserId field.';
+                }
                 field("Bonded Training?"; Rec."Bonded Training?")
                 {
                     ApplicationArea = Basic;
@@ -137,22 +147,10 @@ page 52194249 "HR Training Application Header"
                 field("Responsibility Center"; Rec."Responsibility Center")
                 {
                     ApplicationArea = Basic;
-                    Visible = false;
+
                     ToolTip = 'Specifies the value of the Responsibility Center field.';
                 }
-                field("Employee No_"; Rec."Employee No_")
-                {
-                    ApplicationArea = Basic;
-                    Editable = false;
-                    Visible = false;
-                    ToolTip = 'Specifies the value of the Employee No_ field.';
-                }
-                field(UserId; Rec.UserId)
-                {
-                    ApplicationArea = Basic;
-                    Visible = false;
-                    ToolTip = 'Specifies the value of the UserId field.';
-                }
+
                 field(Location; Rec.Location)
                 {
                     ApplicationArea = Basic;

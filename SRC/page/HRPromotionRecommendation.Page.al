@@ -41,11 +41,7 @@ page 52194273 "HR Promotion Recommendation"
                 {
                     ToolTip = 'Specifies the value of the Date of Recommendation field.';
                 }
-                field("Responsibility Center"; Rec."Responsibility Center")
-                {
-                    ToolTip = 'Specifies the value of the Responsibility Center field.';
-                    Visible = false;
-                }
+
 
                 field("Effective Date Of Transfer"; Rec."Effective Date Of Transfer")
                 {
@@ -57,6 +53,10 @@ page 52194273 "HR Promotion Recommendation"
                 {
                     ToolTip = 'Specifies the value of the Status field.';
                     Editable = false;
+                }
+                field("Responsibility Center"; rec."Responsibility Center")
+                {
+                    ApplicationArea = all;
                 }
                 field("Created By"; Rec."Created By")
                 {

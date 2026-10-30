@@ -36,7 +36,7 @@ table 52193497 "HR Training Needs"
             var
                 EmploREc: Record "HR Employees";
             begin
-                "Captured By" := UserId;
+                //"Captured By" := UserId;
                 if rec."Start Date" < Today then
                     Error('Training date cannot be back dated');
                 CalculateDate();
@@ -162,9 +162,9 @@ table 52193497 "HR Training Needs"
         field(17; "Responsibility Center"; Code[10])
         {
             TableRelation = "Responsibility Center BR NEW".Code;
-            //Caption = 'Responsibility Center';
+            Caption = 'Responsibility Center';
             // TableRela/tion = "Dimension Value".Code where("Global Dimension No." = const(2));
-            Caption = 'Department';
+            // Caption = 'Department';s
             // CaptionClass = '1,1,2';
 
             trigger OnValidate()
@@ -232,6 +232,12 @@ table 52193497 "HR Training Needs"
             OptionCaption = 'Open,Pending Approval,Cancelled,Approved';
             OptionMembers = Open,"Pending Approval",Cancelled,Approved,Rejected;
             Caption = 'Status';
+            trigger OnValidate()
+            var
+                myInt: Integer;
+            begin
+                rec."Captured By" := "Captured By";
+            end;
         }
         field(25; "Global Dimension 1 Code"; Code[20])
         {

@@ -618,7 +618,7 @@ page 52193648 "HR Employee Card"
                     ApplicationArea = Basic;
                     ToolTip = 'Specifies the value of the Incremental Month field.';
                 }
-                field("AD Status"; Rec."AD Status")
+                field("Deputy Director"; rec."Deputy Director")
                 {
                     ApplicationArea = all;
                     ToolTip = 'specifies  the Ad account status';
@@ -1055,6 +1055,54 @@ page 52193648 "HR Employee Card"
             group("&Employee")
             {
                 Caption = '&Employee';
+                action("Mark As Deputy Director")
+                {
+                    ApplicationArea = Basic;
+                    Image = UpdateUnitCost;
+                    Promoted = true;
+                    PromotedCategory = Category5;
+                    PromotedIsBig = true;
+                    // Visible = false;
+                    ToolTip = 'Executes the Update deputy director action.';
+                    trigger OnAction()
+                    begin
+                        if not Confirm('Do you want to mark as deputy director?') then exit;
+
+
+                        HREmp.Reset();
+                        HREmp.SetRange("No.", rec."No.");
+                        if HREmp.FindFirst() then begin
+                            HREmp."Deputy Director" := true;
+                            HREmp.Modify();
+                        end;
+                        Message('done');
+                    end;
+                }
+                action("UnMark As deputy Director")
+                {
+                    ApplicationArea = Basic;
+                    Image = UpdateUnitCost;
+                    Promoted = true;
+                    PromotedCategory = Category5;
+                    PromotedIsBig = true;
+                    // Visible = false;
+                    ToolTip = 'Executes the Update deputy director action.';
+                    trigger OnAction()
+                    begin
+                        if not Confirm('Do you want to Unmark as deputy director?') then exit;
+
+
+                        HREmp.Reset();
+                        HREmp.SetRange("No.", rec."No.");
+                        if HREmp.FindFirst() then begin
+                            HREmp."Deputy Director" := false;
+                            HREmp.Modify();
+                        end;
+
+                        Message('done');
+
+                    end;
+                }
                 action("Next of Kin")
                 {
                     ApplicationArea = Basic;

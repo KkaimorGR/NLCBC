@@ -148,6 +148,7 @@ report 52193508 "Goods Received Note"
                 approvalEntry: Record "Approval Entry";
                 StoreHeadears: Record "Store Requistion Headers";
                 HrEmployees: Record "HR Employees";
+                HRSetup: Record "HR Setup";
 
 
             begin
@@ -183,7 +184,9 @@ report 52193508 "Goods Received Note"
                     Approver := approvalEntry."Approver ID";
                     ApprovalDate := approvalEntry."Last Date-Time Modified";
                 end;
-                GetQRCodes("Store Requistion Headers"."No.");
+                HRSetup.Get();
+                if HRSetup."Allow GenerateQR" = true then
+                    GetQRCodes("Store Requistion Headers"."No.");
                 if CashMgnt.Get() then begin
                     CashMgnt.CalcFields("Sender QR Code");
                     CashMgnt.CalcFields("Approver 1 QR Code");

@@ -15,7 +15,7 @@ page 52194248 "HR Training Needs List"
         {
             repeater(Control1000000000)
             {
-                Editable = false;
+
                 field("Code"; Rec.Code)
                 {
                     ApplicationArea = Basic;
@@ -55,6 +55,7 @@ page 52194248 "HR Training Needs List"
                 field(Status; Rec.Status)
                 {
                     ApplicationArea = Basic;
+                    Editable = true;
                     ToolTip = 'Specifies the value of the Status field.';
                 }
                 field("Employee No"; Rec."Employee No")
@@ -157,6 +158,43 @@ page 52194248 "HR Training Needs List"
                         VarVariant := Rec;
                         CustomApprovals.OnCancelDocApprovalRequest(VarVariant);
                         //AppMgmt.CancelTrainingApprovalRequest(Rec,TRUE,TRUE);
+                    end;
+                }
+                action("Update Records")
+                {
+                    ApplicationArea = Basic;
+                    Caption = 'Update Records';
+                    Image = SendApprovalRequest;
+                    Promoted = true;
+                    PromotedCategory = Category4;
+                    ToolTip = 'Executes the Update Records action.';
+                    trigger OnAction()
+                    var
+                        TraningNeed: Record "HR Training Needs";
+                        HREmployee: Record "HR Employees";
+                    begin
+                        if not Confirm('Do you want to update this records?') then exit;
+                        TraningNeed.Reset();
+                        TraningNeed.SetFilter("Employee No", '<>%1', '');
+                        TraningNeed.SetRange(Status, Status::Open);
+                        if TraningNeed.FindSet() then begin
+                            repeat
+                                HREmployee.Reset();
+                                HREmployee.SetRange("No.", TraningNeed."Employee No");
+                                if HREmployee.FindFirst() then begin
+                                    TraningNeed."Qualification Code" := 'OTHER';
+                                    TraningNeed.Status := TraningNeed.Status::Approved;
+                                    TraningNeed."Qualification Type" := 'OTHER';
+                                    TraningNeed."Captured By" := HREmployee."User ID";
+                                    TraningNeed."Start Date" := 20260107D;
+                                    TraningNeed."End Date" := 20270630D;
+                                    TraningNeed.Modify();
+                                end;
+                            until TraningNeed.Next() = 0;
+
+                        end;
+                        Message('Done');
+
                     end;
                 }
             }

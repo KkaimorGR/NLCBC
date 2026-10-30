@@ -3,8 +3,9 @@ page 52194392 Attachments1
 {
     Editable = true;
     PageType = List;
-    SourceTable = Attachmentss;
+    SourceTable = Attachments1;
     ApplicationArea = All;
+    UsageCategory = Lists;
     Caption = 'Attachments1';
     layout
     {

@@ -482,10 +482,15 @@ Page 52193549 "Items  Requisition Cards"
                     PromotedIsBig = true;
 
                     trigger OnAction()
+                    var
+                        Port: Codeunit PortalWebService;
+                        base64: Text;
                     begin
                         Reset;
                         SetFilter("No.", "No.");
                         Report.Run(52193508, true, true, Rec);
+                        // base64 := Port.GenerateS13Report(rec."No.");
+                        // Message(base64);
                     end;
                 }
                 action("Genrate QR Tag")

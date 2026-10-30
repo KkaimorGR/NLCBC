@@ -5,6 +5,7 @@ page 52194284 "HR 360 Appraisal Card"
     PromotedActionCategories = 'New,Process,Reports,Functions,Appraisal,Workflow Process,Document Attachment';
     SourceTable = "HR Appraisal Header";
     ApplicationArea = All;
+    DeleteAllowed = false;
 
     InsertAllowed = false;
     Caption = 'HR 360 Appraisal Card';
@@ -61,6 +62,7 @@ page 52194284 "HR 360 Appraisal Card"
                 {
                     ApplicationArea = Basic;
                     Editable = true;
+                    Caption = 'Supervisor';
                     ToolTip = 'Specifies the value of the Supervisor field.';
                 }
                 field("Supervisor Name"; Rec."Supervisor Name")

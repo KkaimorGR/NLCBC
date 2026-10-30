@@ -15,6 +15,7 @@ table 52193602 "PR Salary Card"
         field(2; "Basic Pay"; Decimal)
         {
             Caption = 'Basic Pay';
+            Editable = false;
             trigger OnValidate()
             var
                 Text0000: Label 'Do you want to change the Basic Pay for this Employee %1 and Update his/her Employee Card?';

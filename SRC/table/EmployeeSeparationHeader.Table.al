@@ -39,6 +39,7 @@ table 52193490 "Employee Separation Header"
                     "department Name" := HREmp."Department Name";
                     Grade := HREmp.Grade;
                     "Job Description" := HREmp."Job Title";
+                    rec."User ID" := HREmp."User ID";
                     rec."Job ID" := HREmp."Job ID";
                 end
             end;
@@ -72,9 +73,12 @@ table 52193490 "Employee Separation Header"
             var
                 myInt: Integer;
                 CertificateClearance: Record "Clearance Certificate";
+                CLearance: Record "Clearance Certificate";
                 DocNo: Code[40];
                 created: Boolean;
                 HREmp: Record "HR Employees";
+                VarVariant: Variant;
+                CustomApprovals: Codeunit "Approvals Mgt";
 
 
             begin
@@ -110,9 +114,18 @@ table 52193490 "Employee Separation Header"
                             CertificateClearance."Clearance No." := DocNo;
                             CertificateClearance."Employee No" := Rec."Staff Code";
                             CertificateClearance.Validate(CertificateClearance."Employee No");
-                            CertificateClearance."USER ID" := Rec."User ID";
+                            // CertificateClearance."USER ID" := Rec."User ID";
                             created := true;
                             CertificateClearance.Insert();
+                            Commit();
+                            CLearance.Reset();
+                            CLearance.SetRange("Clearance No.", DocNo);
+                            if CLearance.FindFirst() then begin
+                                VarVariant := CLearance;
+                                if CustomApprovals.CheckApprovalsWorkflowEnabled(VarVariant) then
+                                    CustomApprovals.OnSendDocForApproval(VarVariant);
+
+                            end;
                             HREmp.Modify();
                             Message('Member status deactivated successfully and clearance generated');
                         end;
@@ -166,7 +179,7 @@ table 52193490 "Employee Separation Header"
         {
             TableRelation = "Dimension Value".Code where("Global Dimension No." = const(2));
             Caption = 'Department';
-            CaptionClass = '1,1,2';
+            // CaptionClass = '1,1,2';
 
             trigger OnValidate()
             var
@@ -239,7 +252,7 @@ table 52193490 "Employee Separation Header"
             NoSeriesMgt.InitSeries(HRSetup."Separation Nos.", xRec."No series", 0D, "Separation No.", "No series");
         end;
 
-        "User ID" := UserId;
+
         "Request Date" := Today;
 
         MyRecRef.GetTable(Rec);
@@ -280,7 +293,7 @@ table 52193490 "Employee Separation Header"
     var
         myInt: Integer;
     begin
-        "User ID" := UserId;
+        // "User ID" := UserId;
         "Request Date" := Today;
     end;
 

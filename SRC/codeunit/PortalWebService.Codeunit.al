@@ -105,6 +105,13 @@ codeunit 52193425 PortalWebService
         AppraisalHeader: Record "HR Appraisal Header";
         Mobility: Record "Employee Transfers";
 
+    trigger OnRun()
+    var
+        myInt: Integer;
+    begin
+        InsertAssetReceivingLInes('PREQ-0054', 'NLC00002', 4, 50);
+    end;
+
 
 
 
@@ -554,6 +561,7 @@ codeunit 52193425 PortalWebService
         TrainingNeeds.Reset();
         TrainingNeeds.SetRange(TrainingNeeds.Code, ApplicationNo);
         if TrainingNeeds.Find('-') then begin
+            //TrainingNeeds."Captured By" := UserID;
             VarVariant := TrainingNeeds;
             if ApprovalMgt.CheckApprovalsWorkflowEnabled(VarVariant) then
                 ApprovalMgt.OnSendDocForApproval(VarVariant);
@@ -920,20 +928,57 @@ codeunit 52193425 PortalWebService
     var
         RecRef: RecordRef;
         StoreHeaders: Record "Store Requistion Headers";
+        Promotion: Record "HR Promo. Recommend Header";
     begin
-        ApprovalEntry.Reset();
-        ApprovalEntry.SetRange(ApprovalEntry."Document No.", DocumentNo);
-        ApprovalEntry.SetRange(ApprovalEntry."Sender ID", SenderID);
-        if ApprovalEntry.FindSet() then begin
-            repeat
-                if ApprovalEntry.Status = ApprovalEntry.Status::Approved then
-                    Error('You cannot cancel the approval request. The approval proccess has already began.');
-            //CustomApprovals.CancelApprovalRequest(ApprovalEntry);
-            until ApprovalEntry.Next() = 0;
-            if RecRef.Get(ApprovalEntry."Record ID to Approve") then
-                VarVariant := RecRef;
+        Promotion.Reset();
+        Promotion.SetRange(No, DocumentNo);
+        if Promotion.FindFirst() then begin
+            VarVariant := Promotion;
             ApprovalMgt.OnCancelDocApprovalRequest(VarVariant);
+        end else begin
+            ApprovalEntry.Reset();
+            ApprovalEntry.SetRange(ApprovalEntry."Document No.", DocumentNo);
+            ApprovalEntry.SetRange(ApprovalEntry."Sender ID", SenderID);
+            if ApprovalEntry.FindSet() then begin
+                repeat
+                    if ApprovalEntry.Status = ApprovalEntry.Status::Approved then
+                        Error('You cannot cancel the approval request. The approval proccess has already began.');
+                //CustomApprovals.CancelApprovalRequest(ApprovalEntry);
+                until ApprovalEntry.Next() = 0;
+                if RecRef.Get(ApprovalEntry."Record ID to Approve") then
+                    VarVariant := RecRef;
+                ApprovalMgt.OnCancelDocApprovalRequest(VarVariant);
+            end;
         end;
+    end;
+
+    procedure CancelSeperationDocument(DocumentNo: Text; SenderID: Text)
+    var
+        RecRef: RecordRef;
+        StoreHeaders: Record "Store Requistion Headers";
+        Sepration: Record "Employee Separation Header";
+        CustomApprovals: Codeunit "Approvals Mgt";
+    begin
+        Sepration.Reset();
+        Sepration.SetRange("Separation No.", DocumentNo);
+        if Sepration.FindFirst() then begin
+
+            VarVariant := Sepration;
+            CustomApprovals.OnCancelDocApprovalRequest(VarVariant);
+        end;
+        // ApprovalEntry.Reset();
+        // ApprovalEntry.SetRange(ApprovalEntry."Document No.", DocumentNo);
+        // ApprovalEntry.SetRange(ApprovalEntry."Sender ID", SenderID);
+        // if ApprovalEntry.FindSet() then begin
+        //     repeat
+        //     // if ApprovalEntry.Status = ApprovalEntry.Status::Approved then
+        //     //     Error('You cannot cancel the approval request. The approval proccess has already began.');
+        //     //CustomApprovals.CancelApprovalRequest(ApprovalEntry);
+        //     until ApprovalEntry.Next() = 0;
+        //     if RecRef.Get(ApprovalEntry."Record ID to Approve") then
+        //         VarVariant := RecRef;
+        //     ApprovalMgt.OnCancelDocApprovalRequest(VarVariant);
+        // end;
     end;
 
 
@@ -1117,6 +1162,8 @@ codeunit 52193425 PortalWebService
         Promotioheader."Created By" := StaffID;
         Promotioheader."Date of Recommendation" := Today;
         Inserted := true;
+        Promotioheader."Employee No." := EmploNo;
+        Promotioheader.Validate("Employee No.");
         Promotioheader.Insert();
         if Inserted = true then begin
             Promolines.Reset();
@@ -2333,6 +2380,133 @@ codeunit 52193425 PortalWebService
         */
 
     end;
+
+    procedure fnModifySalaryAdvance(DocNo: Code[20]; EmployeeNo: Code[20]; AdvanceAmount: Decimal; ReasonsForAdvance: Text[250]; StaffUserId: Code[50]) status: Text
+    var
+        SalaryAdv: Record "Staff Advance Headers";
+        SalaryAdvLine: Record "Staff Advance Line";
+    begin
+        if AdvanceAmount <= 0 then
+            Error('Advance Amount must be greater than zero.');
+        if not SalaryAdv.Get(DocNo) then
+            Error('Salary Advance %1 not found.', DocNo);
+        if SalaryAdv."Employee No" <> EmployeeNo then
+            Error('Salary Advance %1 does not belong to employee %2.', DocNo, EmployeeNo);
+        if SalaryAdv.Status <> SalaryAdv.Status::Pending then
+            Error('Salary Advance %1 cannot be modified because its status is %2.', DocNo, SalaryAdv.Status);
+
+        //Header
+        SalaryAdv.Cashier := StaffUserId;
+        SalaryAdv."Advance Amount Requested" := AdvanceAmount;
+        SalaryAdv."Reasons for Advance Amount" := ReasonsForAdvance;
+        SalaryAdv.Purpose := ReasonsForAdvance;
+        SalaryAdv.Modify();
+
+        //Line - re-validate Amount so the 3x gross and 1/3 rules apply
+        SalaryAdvLine.Reset();
+        SalaryAdvLine.SetRange(No, SalaryAdv."No.");
+        if SalaryAdvLine.FindFirst() then begin
+            SalaryAdvLine.Purpose := ReasonsForAdvance;
+            SalaryAdvLine.Validate(Amount, AdvanceAmount);
+            SalaryAdvLine.Modify(true);
+        end else begin
+            SalaryAdvLine.Init();
+            SalaryAdvLine.No := SalaryAdv."No.";
+            SalaryAdvLine."Employee No" := SalaryAdv."Employee No";
+            SalaryAdvLine."Employee Name" := SalaryAdv."Employee Names";
+            SalaryAdvLine.Insert(true);
+            SalaryAdvLine.Validate(Amount, AdvanceAmount);
+            SalaryAdvLine.Modify(true);
+        end;
+
+        SalaryAdv.Validate("No.of Months to Repay", 12);
+        SalaryAdv.Modify();
+
+        exit('Salary Advance ' + SalaryAdv."No." + ' updated successfully');
+    end;
+
+    procedure fnCreateSalaryAdvance(EmployeeNo: Code[20]; AdvanceAmount: Decimal; ReasonsForAdvance: Text[250]; StaffUserId: Code[50]) DocNo: Code[20]
+    var
+        SalaryAdv: Record "Staff Advance Headers";
+        OutstandingAdv: Record "Staff Advance Headers";
+        SalaryAdvLine: Record "Staff Advance Line";
+        HREmployee: Record "HR Employees";
+        Intg: Integer;
+    begin
+        // if AdvanceAmount <= 0 then
+        //     Error('Advance Amount must be greater than zero.');
+        if not HREmployee.Get(EmployeeNo) then
+            Error('Employee %1 not found.', EmployeeNo);
+        SalaryAdv.Reset();
+        SalaryAdv.SetRange("Employee No", EmployeeNo);
+        SalaryAdv.SetFilter(Status, '%1|%2', SalaryAdv.Status::Pending, SalaryAdv.Status::"Pending Approval");
+        if SalaryAdv.FindFirst() then
+            exit(SalaryAdv."No.");
+
+        //Block if employee has an outstanding approved advance (same rule as header Employee No validation)
+        OutstandingAdv.Reset();
+        OutstandingAdv.SetRange("Employee No", EmployeeNo);
+        OutstandingAdv.SetRange(Status, OutstandingAdv.Status::Approved);
+        if OutstandingAdv.FindFirst() then begin
+            OutstandingAdv.CalcFields("Payroll Deduction Month");
+            if OutstandingAdv."Payroll Deduction Month" <> 0D then
+                if CalcDate('12M', OutstandingAdv."Payroll Deduction Month") > Today then
+                    Error('You have an outstanding Advance %1. Please clear the outstanding balance to proceed.', OutstandingAdv."No.");
+        end;
+
+        //Header
+        SalaryAdv.Init();
+        SalaryAdv."No." := '';
+        SalaryAdv.Insert(true);
+        SalaryAdv.Cashier := StaffUserId;
+        SalaryAdv."Payment Type" := SalaryAdv."Payment Type"::Imprest;
+        SalaryAdv."Account Type" := SalaryAdv."Account Type"::Customer;
+        SalaryAdv."Employee No" := EmployeeNo;
+        SalaryAdv.Validate(SalaryAdv."Employee No");
+        SalaryAdv."Employee Names" := HREmployee."First Name" + ' ' + HREmployee."Middle Name" + ' ' + HREmployee."Last Name";
+        SalaryAdv.Designation := HREmployee."Job Title";
+        SalaryAdv."Responsibility Center" := HREmployee."Responsibility Center";
+        SalaryAdv."Advance Amount Requested" := AdvanceAmount;
+        SalaryAdv."Reasons for Advance Amount" := ReasonsForAdvance;
+        SalaryAdv.Purpose := ReasonsForAdvance;
+        SalaryAdv.MyRecId := SalaryAdv.RecordId;
+        SalaryAdv.Cashier := StaffUserId;
+        SalaryAdv.Modify();
+
+        //Line - OnInsert fills Date Taken, Purpose, Resp. Center; Amount validation applies the 3x gross and 1/3 rules
+        SalaryAdvLine.Reset();
+        if SalaryAdvLine.FindSet() then
+            Intg := SalaryAdvLine.Count;
+        SalaryAdvLine.Reset();
+        SalaryAdvLine.SetRange(SalaryAdvLine.No, SalaryAdv."No.");
+        SalaryAdvLine.SetRange("Employee No", EmployeeNo);
+        if SalaryAdvLine.FindFirst() then begin
+
+            SalaryAdvLine."Employee No" := SalaryAdv."Employee No";
+            SalaryAdvLine.Validate(SalaryAdvLine."Employee No");
+            SalaryAdvLine."Employee Name" := SalaryAdv."Employee Names";
+            SalaryAdvLine.Validate(Amount, AdvanceAmount);
+            SalaryAdvLine.Modify();
+
+        end else begin
+            SalaryAdvLine.Init();
+            SalaryAdvLine.No := SalaryAdv."No.";
+            SalaryAdvLine."Line No." := Intg + 110;
+            SalaryAdvLine."Employee No" := SalaryAdv."Employee No";
+            SalaryAdvLine.Validate(SalaryAdvLine."Employee No");
+            SalaryAdvLine."Employee Name" := SalaryAdv."Employee Names";
+            SalaryAdvLine.Insert(true);
+
+            SalaryAdvLine.Validate(Amount, AdvanceAmount);
+            SalaryAdvLine.Modify(true);
+
+            SalaryAdv.Validate("No.of Months to Repay", 12);
+            SalaryAdv.Modify();
+        end;
+
+        exit(SalaryAdv."No.");
+    end;
+
 
 
     procedure Approval_Staff_Advance(Staff_Advance_No: Code[10])
@@ -4433,8 +4607,15 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
         HREmp.Reset();
 
         HREmp.SetRange(HREmp."No.", EmployeeNo);
-        if HREmp.Find('-') then
+        if HREmp.Find('-') then begin
             UserID := HREmp."User ID";
+        end else begin
+            HREmp.Reset();
+            HREmp.Reset();
+            HREmp.SetRange(HREmp."User ID", EmployeeNo);
+            if HREmp.Find('-') then
+                UserID := HREmp."User ID";
+        end;
     end;
 
     procedure GetmyAppraisedperfomance(EmployeeN: Code[30]; ApprsailPeriod: code[40]) data: Text
@@ -4622,6 +4803,24 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
         end
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Approvals Mgmt.", 'OnBeforeApproveSelectedApprovalRequest', '', false, false)]
+    local procedure "Approvals Mgmt._OnBeforeApproveSelectedApprovalRequest"(var ApprovalEntry: Record "Approval Entry"; var IsHandled: Boolean)
+    var
+        ApprovalEntryVar: Record "Approval Entry";
+    begin
+        ApprovalEntryVar.Reset();
+        ApprovalEntryVar.SetRange("Document No.", ApprovalEntry."Document No.");
+        ApprovalEntryVar.SetRange("Sequence No.", ApprovalEntry."Sequence No.");
+        ApprovalEntryVar.SetFilter("Approver ID", '<>%1', ApprovalEntry."Approver ID");
+        if ApprovalEntryVar.FindSet() then begin
+            repeat
+                ApprovalEntryVar.Status := ApprovalEntryVar.Status::Canceled;
+                ApprovalEntryVar.Modify();
+            until ApprovalEntryVar.Next() = 0;
+        end;
+    end;
+
+
 
     procedure SendSeparationReqForApproval(ApplicationCode: Code[50])
     var
@@ -4632,15 +4831,8 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
 
         EmployeeSeparationBuffer.SetRange(EmployeeSeparationBuffer."Separation No.", ApplicationCode);
 
-        if EmployeeSeparationBuffer.Find('-') then begin
-
-            EmployeeSeparation.Reset();
-            EmployeeSeparation.SetRange(EmployeeSeparation."Staff Code", EmployeeSeparationBuffer."Staff Code");
-            EmployeeSeparation.SetRange(EmployeeSeparation.Status, EmployeeSeparationBuffer.Status::"Pending Approval");
-            if EmployeeSeparation.Find('-') then
-                Error(TextSeparationReqExists);
-
-            VarVariant := EmployeeSeparation;
+        if EmployeeSeparationBuffer.FindFirst() then begin
+            VarVariant := EmployeeSeparationBuffer;
             ApprovalMgt.OnSendDocForApproval(VarVariant);
 
         end
@@ -5597,6 +5789,7 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
             LeavePlanner.Names := HREmp.FullName;
             LeavePlanner."Job Tittle" := HREmp."Job Title";
             LeavePlanner."Employee No" := hrEmpRec."No.";
+            LeavePlanner.Validate("Employee No");
             LeavePlanner."User ID" := StaffID;
             LeavePlanner.Active := true;
             LeavePlanner.Type := LeavePlanner.Type::Functional;
@@ -6295,24 +6488,41 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
         StoreHeaders.Reset();
         StoreHeaders.SetRange("No.", DocNo);
         if StoreHeaders.Find('-') then begin
+            linerec := 0;
 
             StoreLines2.Reset();
-            if StoreLines2.FindSet() then
-                linerec := StoreLines2.Count;
+            // if StoreLines2.FindSet() then
+            linerec := StoreLines2.Count;
             StoreLines.Reset();
-            StoreLines.Init();
-            StoreLines."Line No." := linerec + 1;
-            StoreLines."Requistion No" := DocNo;
-            StoreLines."No." := ItemNo;
-            StoreLines.Type := StoreLines.Type::Item;
-            StoreLines.Validate(StoreLines."No.");
-            StoreLines.Quantity := Quantity;
-            StoreLines.Validate(StoreLines.Quantity);
-            StoreLines."Quantity Requested" := QuantityRequested;
-            StoreLines.Validate(StoreLines."Quantity Requested");
-            StoreLines."Unit Cost" := UnitCost;
-            StoreLines.Validate(StoreLines."Unit Cost");
-            StoreLines.Insert();
+            if StoreLines.FindLast() then begin
+                StoreLines.Init();
+                StoreLines."Line No." := linerec + 3;
+                StoreLines."Requistion No" := DocNo;
+                StoreLines."No." := ItemNo;
+                StoreLines.Type := StoreLines.Type::Item;
+                StoreLines.Validate(StoreLines."No.");
+                StoreLines.Quantity := Quantity;
+                StoreLines.Validate(StoreLines.Quantity);
+                StoreLines."Quantity Requested" := QuantityRequested;
+                StoreLines.Validate(StoreLines."Quantity Requested");
+                StoreLines."Unit Cost" := UnitCost;
+                StoreLines.Validate(StoreLines."Unit Cost");
+                StoreLines.Insert();
+            end else begin
+                StoreLines.Init();
+                StoreLines."Line No." := linerec + 1;
+                StoreLines."Requistion No" := DocNo;
+                StoreLines."No." := ItemNo;
+                StoreLines.Type := StoreLines.Type::Item;
+                StoreLines.Validate(StoreLines."No.");
+                StoreLines.Quantity := Quantity;
+                StoreLines.Validate(StoreLines.Quantity);
+                StoreLines."Quantity Requested" := QuantityRequested;
+                StoreLines.Validate(StoreLines."Quantity Requested");
+                StoreLines."Unit Cost" := UnitCost;
+                StoreLines.Validate(StoreLines."Unit Cost");
+                StoreLines.Insert();
+            end;
 
         end;
 
