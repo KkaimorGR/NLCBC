@@ -225,14 +225,40 @@ page 52193528 "Store Lines"
                         Rec.OpenItemTrackingLines();
                     end;
                 }
-                action("Issue Item")
+                action("Issue Item1")
+
                 // Image=IssueFinanceCharge;
                 {
                     Promoted = true;
+                    Caption = 'Issue Item';
+
                     PromotedCategory = Category4;
                     PromotedIsBig = true;
                     PromotedOnly = true;
                     Visible = rec.Issued = false;
+                    Enabled = value;
+                    trigger OnAction()
+                    var
+                        WebPo: Codeunit PortalWebService;
+                    begin
+                        Rec.TestField(Quantity);
+                        WebPo.IssueGoods(Rec."Line No.", Rec."Requistion No", UserId, Rec.Quantity, Rec."Description 2");
+                        CurrPage.Update(false);
+                        Message('Issued and Posted');
+                    end;
+                }
+
+                action("Issue Item")
+
+                // Image=IssueFinanceCharge;
+                {
+                    Promoted = true;
+                    Visible = false;
+
+                    PromotedCategory = Category4;
+                    PromotedIsBig = true;
+                    PromotedOnly = true;
+                    // Visible = rec.Issued = false;
                     Enabled = value;
                     trigger OnAction()
                     var
@@ -304,13 +330,13 @@ page 52193528 "Store Lines"
                                                 GenJnline.Description := ReqLine.Description;
                                                 GenJnline.Quantity := ReqLine.Quantity;
                                                 GenJnline."Item Charge No." := ReqLine."No.";
-                                                GenJnline."Shortcut Dimension 1 Code" := Storeheaders."Global Dimension 1 Code";
-                                                GenJnline.Validate("Shortcut Dimension 1 Code");
-                                                GenJnline."Shortcut Dimension 2 Code" := Storeheaders."Shortcut Dimension 2 Code";
-                                                GenJnline.Validate("Shortcut Dimension 2 Code");
-                                                GenJnline.ValidateShortcutDimCode(3, Storeheaders."Shortcut Dimension 3 Code");
-                                                GenJnline.ValidateShortcutDimCode(4, Storeheaders."Shortcut Dimension 4 Code");
-                                                GenJnline.Quantity := ReqLine.Quantity;
+                                                // GenJnline."Shortcut Dimension 1 Code" := Storeheaders."Global Dimension 1 Code";
+                                                // GenJnline.Validate("Shortcut Dimension 1 Code");
+                                                // GenJnline."Shortcut Dimension 2 Code" := Storeheaders."Shortcut Dimension 2 Code";
+                                                // GenJnline.Validate("Shortcut Dimension 2 Code");
+                                                // GenJnline.ValidateShortcutDimCode(3, Storeheaders."Shortcut Dimension 3 Code");
+                                                // GenJnline.ValidateShortcutDimCode(4, Storeheaders."Shortcut Dimension 4 Code");
+                                                // GenJnline.Quantity := ReqLine.Quantity;
                                                 GenJnline."Quantity (Base)" := ReqLine.Quantity;
                                                 GenJnline.Insert(true);
                                             end;

@@ -6737,7 +6737,11 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
         LineNo: Integer;
         Storeheaders: Record "Store Requistion Headers";
         RequisitionLIne2: Record "Store Requisition TT Line";
+        UserSet: Record "User Setup";
     begin
+        UserSet.Get(UserCode);
+        if UserSet."Can Issue Asset" = false then
+            Error('Insufficient rights');
         RequisitionLIne2.Reset();
         RequisitionLIne2.SetRange("Line No.", LineNo3);
         RequisitionLIne2.SetRange("Requistion No", RequestNo);
@@ -6777,35 +6781,32 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
                                     GenJnline.SetRange(GenJnline."Journal Batch Name", InventorySetup."Item Jnl Batch");
                                     if GenJnline.Find('-') then
                                         GenJnline.DeleteAll();
+                                    if ReqLine.Quantity <= 0 then
+                                        Error('Quantity to issue must be greater than zero');
+                                    if Storeheaders."Issuing Store" = '' then
+                                        Storeheaders."Issuing Store" := ReqLine."Issuing Store";
+                                    Storeheaders.TestField("Issuing Store");
                                     LineNo := LineNo + 1000;
                                     GenJnline.Init();
                                     GenJnline."Journal Template Name" := InventorySetup."Item Jnl Template";
                                     GenJnline."Journal Batch Name" := InventorySetup."Item Jnl Batch";
                                     GenJnline."Line No." := LineNo;
-                                    GenJnline."Entry Type" := GenJnline."Entry Type"::"Negative Adjmt.";
-                                    GenJnline."Document No." := RequisitionLIne2."No.";
-                                    GenJnline."Item No." := ReqLine."No.";
-                                    //  GenJnline."Inventory Posting Group":=InventorySetup.INvt;
-                                    // if GenJnline."Inventory Posting Group"='' then
-                                    // GenJnline."Inventory Posting Group":='GOODS';
-                                    // GenJnline."Gen. Prod. Posting Group":=ReqLine."Gen. Prod. Posting Group";
+                                    GenJnline.Validate("Posting Date", Today);
+                                    GenJnline.Validate("Entry Type", GenJnline."Entry Type"::"Negative Adjmt.");
+                                    GenJnline."Document No." := RequisitionLIne2."Requistion No";
+                                    EnsureItemUnitOfMeasure(ReqLine."No.");
+                                    // Validating the item brings in UoM, unit cost, Gen. Prod. and Inventory Posting Groups from the Item card
+                                    GenJnline.Validate("Item No.", ReqLine."No.");
+                                    // Default when the Item card has no Gen. Prod. Posting Group
                                     if GenJnline."Gen. Prod. Posting Group" = '' then
                                         GenJnline."Gen. Prod. Posting Group" := 'GOODS';
-                                    // GenJnline.Validate("Item No.");
-                                    GenJnline."Location Code" := 'Main Store';
-                                    // GenJnline.Validate("Location Code");
-                                    GenJnline."Posting Date" := Storeheaders."Request date";
-                                    GenJnline."Inventory Posting Group" := ReqLine."Gen. Prod. Posting Group";
+                                    if GenJnline."Inventory Posting Group" = '' then
+                                        Error('Item %1 has no Inventory Posting Group. Set it on the Item card.', ReqLine."No.");
+                                    if ReqLine."Gen. Bus. Posting Group" <> '' then
+                                        GenJnline.Validate("Gen. Bus. Posting Group", ReqLine."Gen. Bus. Posting Group");
+                                    GenJnline.Validate("Location Code", Storeheaders."Issuing Store");
                                     GenJnline.Description := ReqLine.Description;
-                                    GenJnline.Quantity := ReqLine.Quantity;
-                                    GenJnline."Shortcut Dimension 1 Code" := Storeheaders."Global Dimension 1 Code";
-                                    GenJnline.Validate("Shortcut Dimension 1 Code");
-                                    GenJnline."Shortcut Dimension 2 Code" := Storeheaders."Shortcut Dimension 2 Code";
-                                    GenJnline.Validate("Shortcut Dimension 2 Code");
-                                    GenJnline.ValidateShortcutDimCode(3, Storeheaders."Shortcut Dimension 3 Code");
-                                    GenJnline.ValidateShortcutDimCode(4, Storeheaders."Shortcut Dimension 4 Code");
-                                    GenJnline.Quantity := ReqLine.Quantity;
-                                    GenJnline."Quantity (Base)" := ReqLine.Quantity;
+                                    GenJnline.Validate(Quantity, ReqLine.Quantity);
                                     GenJnline.Insert(true);
                                 end;
                                 //Post Entries
@@ -6826,6 +6827,30 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
                 Error('item Cannot be issued');
         end;
 
+    end;
+
+    local procedure EnsureItemUnitOfMeasure(ItemNo: Code[20])
+    var
+        Item: Record Item;
+        ItemUnitOfMeasure: Record "Item Unit of Measure";
+        UnitOfMeasure: Record "Unit of Measure";
+    begin
+        Item.Get(ItemNo);
+        if Item."Base Unit of Measure" = '' then
+            exit;
+        if ItemUnitOfMeasure.Get(Item."No.", Item."Base Unit of Measure") then
+            exit;
+        if not UnitOfMeasure.Get(Item."Base Unit of Measure") then begin
+            UnitOfMeasure.Init();
+            UnitOfMeasure.Code := Item."Base Unit of Measure";
+            UnitOfMeasure.Description := Item."Base Unit of Measure";
+            UnitOfMeasure.Insert(true);
+        end;
+        ItemUnitOfMeasure.Init();
+        ItemUnitOfMeasure."Item No." := Item."No.";
+        ItemUnitOfMeasure.Code := Item."Base Unit of Measure";
+        ItemUnitOfMeasure."Qty. per Unit of Measure" := 1;
+        ItemUnitOfMeasure.Insert(true);
     end;
 
 
@@ -8164,6 +8189,40 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
 
     end;
 
+    procedure CheckCanIssueright(UserIdco: Code[30]): Boolean
+    var
+        myInt: Integer;
+        Userset: Record "User Setup";
+    begin
+        Userset.Reset();
+        Userset.SetRange("User ID", UserIdco);
+        if Userset.FindFirst() then begin
+            if Userset."Can Issue Asset" = true then
+                exit(true)
+            else
+                exit(false);
+        end else
+            exit(false);
+
+    end;
+
+    procedure CheckCanReceiveright(UserIdco: Code[30]): Boolean
+    var
+        myInt: Integer;
+        Userset: Record "User Setup";
+    begin
+        Userset.Reset();
+        Userset.SetRange("User ID", UserIdco);
+        if Userset.FindFirst() then begin
+            if Userset."Can recceive" = true then
+                exit(true)
+            else
+                exit(false);
+        end else
+            exit(false);
+
+    end;
+
     procedure DelegateApproval(DocNUm: Code[30]; UseridCode: Text[200])
     var
         myInt: Integer;
@@ -8283,12 +8342,14 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
         ApprovalEntry.Reset();
         ApprovalEntry.SetRange(ApprovalEntry."Document No.", DocNo);
         ApprovalEntry.SetRange(ApprovalEntry.Status, ApprovalEntry.Status::Open); //added to prevent double approval of a document
-        if ApprovalEntry.FindFirst() then begin
+        if ApprovalEntry.FindSet() then begin
             if not ApprovalSetup.Get(UserCode) then
                 Error(Text004);
+
             ApprovalEntry."Sender ID" := UserCode;
             ApprovalEntry."Last Modified By User ID" := UserCode;
             ApprovalEntry.Modify(true);
+
             Message('USERIDMODIFIED');
 
         end
