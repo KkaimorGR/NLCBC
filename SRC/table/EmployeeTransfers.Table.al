@@ -600,6 +600,8 @@ table 52193989 "Employee Transfers"
             end;
             //Rec.Validate("Original Station");
         end;
+        if (Rec.Type = Rec.Type::"Self initiated") and (Rec."Document Type" = Rec."Document Type"::Application) and (not Rec."Transfer Appeal") then
+            CheckNoPendingApplication("Employee No", "Document No");
     end;
 
     trigger OnModify()
@@ -626,6 +628,30 @@ table 52193989 "Employee Transfers"
         usersetup: record "User Setup";
         EMPTRANS: Record "Employee Transfers";
 
+
+    /// <summary>
+    /// Blocks a new self-initiated transfer application (or its submission) while the employee
+    /// still has another application that has not been finalised (Released/Rejected) or posted.
+    /// </summary>
+    procedure CheckNoPendingApplication(EmployeeNo: Code[20]; ExcludeDocNo: Code[20])
+    var
+        ExistingTransfer: Record "Employee Transfers";
+        PendingApplicationErr: Label 'You already have a transfer application %1 with status %2. You cannot submit a new transfer request until the existing one has been approved or rejected.', Comment = '%1 = Document No, %2 = Status';
+    begin
+        if EmployeeNo = '' then
+            exit;
+        ExistingTransfer.Reset();
+        ExistingTransfer.SetRange("Employee No", EmployeeNo);
+        ExistingTransfer.SetRange(Type, ExistingTransfer.Type::"Self initiated");
+        ExistingTransfer.SetRange("Document Type", ExistingTransfer."Document Type"::Application);
+        ExistingTransfer.SetRange("Transfer Appeal", false);
+        ExistingTransfer.SetRange(Posted, false);
+        ExistingTransfer.SetFilter(Status, '<>%1&<>%2', ExistingTransfer.Status::Released, ExistingTransfer.Status::Rejected);
+        if ExcludeDocNo <> '' then
+            ExistingTransfer.SetFilter("Document No", '<>%1', ExcludeDocNo);
+        if ExistingTransfer.FindFirst() then
+            Error(PendingApplicationErr, ExistingTransfer."Document No", ExistingTransfer.Status);
+    end;
 
     procedure SendRejection()
     var

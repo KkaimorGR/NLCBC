@@ -817,7 +817,14 @@ table 52193601 "Staff Advance Headers"
 
     end;
 
+    trigger OnDelete()
+    begin
+        if Status <> Status::Pending then
+            Error(DeleteNotAllowedErr, "No.", Status);
+    end;
+
     var
+        DeleteNotAllowedErr: Label 'You cannot delete Staff Advance %1 because its status is %2. Only open (Pending) documents can be deleted.', Comment = '%1 = Document No., %2 = Status';
         CStatus: Code[20];
 
         UserTemplate: Record "Cash Office User Template";

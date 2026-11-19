@@ -200,6 +200,8 @@ page 52193518 "Employee Transfer"
                         TransferLines: Record "HR Employee Transfer Lines";
                     begin
                         rec.TestField(Status, rec.Status::Open);
+                        if (Rec.Type = Rec.Type::"Self initiated") and (not Rec."Transfer Appeal") then
+                            Rec.CheckNoPendingApplication(Rec."Employee No", Rec."Document No");
                         VarVariant := Rec;
                         if ApprovalsMgmt.CheckApprovalsWorkflowEnabled(VarVariant) then
                             ApprovalsMgmt.OnSendDocForApproval(VarVariant);

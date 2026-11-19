@@ -29,6 +29,7 @@ table 52193567 "HR Promo. Recommend Lines"
             Caption = 'Employee No.';
             trigger OnValidate()
             begin
+                CheckEmployeeHasOpenDocument();
                 "New Salary Grade" := '';
                 Reason := '';
 
@@ -292,6 +293,40 @@ table 52193567 "HR Promo. Recommend Lines"
     }
 
     fieldgroups { }
+
+    /// <summary>
+    /// Errors if the employee already appears on another line of this document,
+    /// or on another promotion document that is New (open) or Pending Approval.
+    /// </summary>
+    procedure CheckEmployeeHasOpenDocument()
+    var
+        OtherLines: Record "HR Promo. Recommend Lines";
+        OtherHeader: Record "HR Promo. Recommend Header";
+        EmployeeHasOpenDocErr: Label 'Employee %1 - %2 already has promotion document %3 with status %4. You cannot create another document until it is completed.', Comment = '%1 = Employee No., %2 = Employee Name, %3 = Document No., %4 = Status';
+        EmployeeDuplicateOnDocErr: Label 'Employee %1 - %2 has already been added to this document (%3).', Comment = '%1 = Employee No., %2 = Employee Name, %3 = Document No.';
+    begin
+        if "Employee No." = '' then
+            exit;
+
+        // Duplicate on the same document
+        OtherLines.Reset();
+        OtherLines.SetRange("Document No", "Document No");
+        OtherLines.SetRange("Employee No.", "Employee No.");
+        OtherLines.SetFilter("Line No.", '<>%1', "Line No.");
+        if OtherLines.FindFirst() then
+            Error(EmployeeDuplicateOnDocErr, OtherLines."Employee No.", OtherLines."Employee Name", "Document No");
+
+        // Open / pending documents elsewhere
+        OtherLines.Reset();
+        OtherLines.SetRange("Employee No.", "Employee No.");
+        OtherLines.SetFilter("Document No", '<>%1', "Document No");
+        if OtherLines.FindSet() then
+            repeat
+                if OtherHeader.Get(OtherLines."Document No") then
+                    if OtherHeader.Status in [OtherHeader.Status::New, OtherHeader.Status::"Pending Approval"] then
+                        Error(EmployeeHasOpenDocErr, OtherLines."Employee No.", OtherLines."Employee Name", OtherHeader.No, OtherHeader.Status);
+            until OtherLines.Next() = 0;
+    end;
 
     var
         HRSetup: Record "HR Setup";

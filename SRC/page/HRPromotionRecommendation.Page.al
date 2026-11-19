@@ -148,6 +148,7 @@ page 52194273 "HR Promotion Recommendation"
                                         Reasonav := true;
                                 if Reasonav = false then
                                     Error('every line should have a reason and payperiod must have a value');
+                                HrPromoRecomLines.CheckEmployeeHasOpenDocument();
                             until HrPromoRecomLines.Next() = 0;
                         end;
                         if Confirm('Send this Application for Approval?', true) = false then

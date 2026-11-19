@@ -5914,6 +5914,8 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
         HRSetup.Get;
         HRSetup.TestField("Employee Transfer Nos.");
         HRSetup.TestField("Transfer Allowance");
+        // Block a new application while a previous one is still pending (Insert(false) below skips OnInsert)
+        Mobility.CheckNoPendingApplication(CopyStr(EmployeeNo, 1, 20), '');
         DocNo := NoSeriesMgt.GetNextNo(HRSetup."Employee Transfer Nos.", 0D, True);
         Mobility.Init();
         Mobility."Employee No" := EmployeeNo;
@@ -5961,6 +5963,8 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
         Mobility.Reset();
         Mobility.SetRange("Document No", DocNo);
         if Mobility.Find('-') then begin
+            if (Mobility.Type = Mobility.Type::"Self initiated") and (Mobility."Document Type" = Mobility."Document Type"::Application) and (not Mobility."Transfer Appeal") then
+                Mobility.CheckNoPendingApplication(Mobility."Employee No", Mobility."Document No");
             VarVariant := Mobility;
             IF CustomApprovalMgt.CheckApprovalsWorkflowEnabled(VarVariant) THEN
                 CustomApprovalMgt.OnSendDocForApproval(VarVariant);
