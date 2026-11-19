@@ -6631,7 +6631,7 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
         StoreHeaders.Validate(StoreHeaders."Requester ID");
         //StoreHeaders."Global Dimension 1 Code" := CountyCode;
         //StoreHeaders."Shortcut Dimension 2 Code" := DirectorateCode;
-        StoreHeaders."Issuing Store" := IssuingStore;
+        StoreHeaders."Issuing Store" := 'MAIN STORE';
 
 
 
@@ -6664,6 +6664,7 @@ HRApplicantQualifications_2.RenewalDate := ApplicantEducationBackground.RenewalD
             // StoreHeaders.Validate(StoreHeaders."Shortcut Dimension 2 Code");
             StoreHeaders."Issuing Store" := IssuingStore;
             StoreHeaders.Validate(StoreHeaders."Issuing Store");
+            StoreHeaders."Issuing Store" := 'MAIN STORE';
             if StoreHeaders.Modify(true) then begin
                 status := 'Document Edited Successfully';
             end

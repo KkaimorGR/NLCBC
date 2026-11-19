@@ -1632,6 +1632,7 @@ permissionset 52193494 GreenCom
         page "HR Transport Requisition List" = X,
         page "HR Transport Requisition Pass" = X,
         page HRObjectivesTargets = X,
+        page "HR Objectives Targets SF" = X,
         page "IBT Lines" = X,
         page "IBT Page Card" = X,
         page "IBT Sub Page List" = X,

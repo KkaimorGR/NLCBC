@@ -495,6 +495,7 @@ table 52193601 "Staff Advance Headers"
                 HrSetup: Record "HR Setup";
                 Prperiods: Record "PR Payroll Periods";
                 ClsedDate: Date;
+                Bpay: Decimal;
             // hrsetup: Record "HR Setup";
             begin
                 hrsetup.Get();

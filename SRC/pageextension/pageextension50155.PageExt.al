@@ -21,7 +21,7 @@ pageextension 52193482 pageextension50155 extends "Fixed Asset List"
         }
         modify(Description)
         {
-            Visible = false;
+            Visible = true;
         }
         modify("Budgeted Asset")
         {
