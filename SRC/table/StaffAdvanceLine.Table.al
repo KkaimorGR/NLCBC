@@ -32,6 +32,7 @@ table 52193660 "Staff Advance Line"
             var
                 HrSetup: Record "HR Setup";
             begin
+                ImprestHeader.get(No);
                 HrSetup.Get();
                 "No.of Months to Repay" := 12;
                 ImprestHeader.CalcFields("Payroll Deduction Month");
