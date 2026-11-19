@@ -91,17 +91,17 @@ table 52193497 "HR Training Needs"
             OptionMembers = "  ",Appraisal,Succesion,Training,Employee,"Employee Skill Plan";
             Caption = 'Need Source';
         }
-        field(10; Provider; Code[20])
+        field(10; Provider; Text[200])
         {
-            TableRelation = Vendor."No.";
+            // TableRelation = Vendor."No.";
             Caption = 'Provider';
             trigger OnValidate()
             var
                 myInt: Integer;
                 VendorRec: Record Vendor;
             begin
-                if VendorRec.Get(rec.Provider) then
-                    rec."Provider Name" := VendorRec.Name;
+                //if VendorRec.Get(rec.Provider) then
+                rec."Provider Name" := Provider;
             end;
         }
         field(11; Posted; Boolean)
@@ -342,6 +342,11 @@ table 52193497 "HR Training Needs"
     var
         EmploREc: Record "HR Employees";
     begin
+        if Code = '' then begin
+            HRSetup.Get();
+            HRSetup.TestField(HRSetup."Training Needs Nos.");
+            NoSeriesMgt.InitSeries(HRSetup."Training Needs Nos.", xRec."No. Series", 0D, Code, "No. Series");
+        end;
         "Captured By" := UserId;
         EmploREc.Reset();
         EmploREc.SetRange("User ID", rec."Captured By");
@@ -350,11 +355,7 @@ table 52193497 "HR Training Needs"
             rec."Responsibility Center" := EmploREc."Responsibility Center";
         end;
 
-        if Code = '' then begin
-            HRSetup.Get();
-            HRSetup.TestField(HRSetup."Training Needs Nos.");
-            NoSeriesMgt.InitSeries(HRSetup."Training Needs Nos.", xRec."No. Series", 0D, Code, "No. Series");
-        end;
+
 
         if HREmp.Get(Rec."Employee No") then begin
 

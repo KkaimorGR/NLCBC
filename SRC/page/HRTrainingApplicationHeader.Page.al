@@ -394,15 +394,32 @@ page 52194249 "HR Training Application Header"
                     PromotedOnly = true;
                     PromotedIsBig = true;
                     ToolTip = 'Executes the Attachment action.';
+
                     trigger OnAction()
                     var
-                        DMSInt: Record DMS;
+                        attachLink: Record "Document Attachment";
+                        Expense: Record "HR Training App Header";
+                        RecRef: RecordRef;
+                        Expe: Record "HR Training App Header";
+                        DocumentAttachmentDetails: Page "Document Attachment Details";
+
                     begin
-                        DMSInt.Reset();
-                        DMSInt.SetRange(DMSInt."DMS Link Type", DMSInt."DMS Link Type"::Training);
-                        if DMSInt.Find('-') then
-                            Hyperlink(DMSInt."DMS Link Path" + Rec."Application No");
+
+                        attachLink.setRange(attachLink."No.", Rec."Application No");
+                        if attachLink.FindSet then
+                            Page.Run(Page::"Document Attachment Details", attachLink)
+                        else
+                            Error('No attachments');
                     end;
+                    // trigger OnAction()
+                    // var
+                    //     DMSInt: Record DMS;
+                    // begin
+                    //     DMSInt.Reset();
+                    //     DMSInt.SetRange(DMSInt."DMS Link Type", DMSInt."DMS Link Type"::Training);
+                    //     if DMSInt.Find('-') then
+                    //         Hyperlink(DMSInt."DMS Link Path" + Rec."Application No");
+                    // end;
                 }
                 action("Training Costs")
                 {

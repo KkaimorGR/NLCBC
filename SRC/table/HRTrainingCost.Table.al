@@ -14,19 +14,20 @@ table 52193556 "HR Training Cost"
         {
             TableRelation = "HR Lookup Values".Code where(Type = filter("Training Cost Items"));
             Caption = 'Cost Item';
+            ObsoleteState = Removed;
             trigger OnValidate()
             var
                 myInt: Integer;
                 Vlooops: Record "HR Lookup Values";
             begin
                 Validatedetails();
-                Cost := 0;
-                Vlooops.Reset();
-                Vlooops.SetRange(Vlooops.Code, Rec."Cost Item");
-                if Vlooops.FindFirst() then begin
-                    rec.Cost := Vlooops."Maximum Pay";
-                    Rec."Cost Item Description" := Vlooops.Description;
-                end;
+                // Cost := 0;
+                // Vlooops.Reset();
+                // Vlooops.SetRange(Vlooops.Code, Rec."Cost Item");
+                // if Vlooops.FindFirst() then begin
+                //     rec.Cost := Vlooops."Maximum Pay";
+                //     Rec."Cost Item Description" := Vlooops.Description;
+                // end;
             end;
         }
         field(3; Cost; Decimal)
@@ -43,11 +44,16 @@ table 52193556 "HR Training Cost"
         {
             Caption = 'Cost Item Description';
         }
+        field(5; Line; Integer)
+        {
+            DataClassification = ToBeClassified;
+            AutoIncrement = true;
+        }
     }
 
     keys
     {
-        key(Key1; "Training ID", "Cost Item")
+        key(Key1; "Training ID", Line)
         {
             Clustered = true;
         }

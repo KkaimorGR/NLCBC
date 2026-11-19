@@ -419,11 +419,15 @@ page 52194246 "HR Training Needs Card"
 
     trigger OnAfterGetCurrRecord()
     begin
+        rec.CalcFields(Costs);
+        rec.CalcFields("Estimated Cost");
         UpdateControls();
     end;
 
     trigger OnAfterGetRecord()
     begin
+        rec.CalcFields(Costs);
+        rec.CalcFields("Estimated Cost");
         UpdateControls();
     end;
 
@@ -434,6 +438,8 @@ page 52194246 "HR Training Needs Card"
 
     trigger OnOpenPage()
     begin
+        rec.CalcFields(Costs);
+        rec.CalcFields("Estimated Cost");
         UpdateControls();
     end;
 
@@ -449,8 +455,7 @@ page 52194246 "HR Training Needs Card"
 
     local procedure UpdateControls()
     begin
-        rec.CalcFields(Costs);
-        rec.CalcFields("Estimated Cost");
+
         FieldEditable := true;
         if rec.Status <> rec.Status::Open then
             CurrPage.Editable := false

@@ -2998,6 +2998,35 @@ codeunit 52193425 PortalWebService
         HRTrainingApplicationLineParticipants.Insert(true);
     end;
 
+    procedure InsertHRTrainingCost(TrainingID: Code[50]; CostItemDes: Text[300]; Cost: Decimal): Text
+    var
+        HRTrainingCost: Record "HR Training Cost";
+        NextLineNo: Integer;
+    begin
+        if TrainingID = '' then
+            Error('Training ID must have a value.');
+        if CostItemDes = '' then
+            Error('Cost Item Description must have a value.');
+        if StrLen(CostItemDes) > MaxStrLen(HRTrainingCost."Cost Item Description") then
+            Error('Cost Item Description cannot be longer than %1 characters.', MaxStrLen(HRTrainingCost."Cost Item Description"));
+        // Key is "Training ID", Line - get the next line number for this Training ID
+        HRTrainingCost.Reset();
+        HRTrainingCost.SetRange("Training ID", TrainingID);
+        if HRTrainingCost.FindLast() then
+            NextLineNo := HRTrainingCost.Line + 1
+        else
+            NextLineNo := 1;
+
+        HRTrainingCost.Init();
+        HRTrainingCost."Training ID" := TrainingID;
+        HRTrainingCost.Line := NextLineNo;
+        HRTrainingCost."Cost Item Description" := CostItemDes;
+        HRTrainingCost.Validate(Cost, Cost);
+        HRTrainingCost.Insert();
+
+        exit('Training cost added successfully');
+    end;
+
 
     procedure SaveBackToOfficeReport(DocumentNo: Code[20]; StartDate: Date; EndDate: Date; Comments: Text[250]; EmployeeNo: Text[50]; txt1: Text[250]; txt2: Text[250]; txt3: Text[250]; txt4: Text[250]; txt5: Text[250]; txt6: Text[250]; TrainingApplicationCode: Code[20])
     begin
