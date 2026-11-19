@@ -39,6 +39,8 @@ table 52193497 "HR Training Needs"
                 //"Captured By" := UserId;
                 if rec."Start Date" < Today then
                     Error('Training date cannot be back dated');
+                if DetermineIfIsNonWorking(Rec."Start Date") then
+                    Error('Start Date %1 is a non working day. Please select a working day.', Rec."Start Date");
                 CalculateDate();
                 EmploREc.Reset();
                 EmploREc.SetRange("User ID", rec."Captured By");
@@ -373,12 +375,40 @@ table 52193497 "HR Training Needs"
     local procedure CalculateDate()
     var
         HRDates: Codeunit "HR Dates";
+        NoOfDays: Integer;
     begin
         TestField("Start Date");
 
         if "Start Date" <> 0D then begin
             "Re-Assessment Date" := 0D;
-            "End Date" := CalcDate(Duration, "Start Date");
+            if "Inclusive of Non Working Days" then
+                "End Date" := CalcDate(Duration, "Start Date")
+            else begin
+                // Same approach as HR Leave Application: count only working days (HR Calendar List)
+                NoOfDays := CalcDate(Duration, "Start Date") - "Start Date";
+                "End Date" := DetermineTrainingEndDate("Start Date", NoOfDays);
+            end;
         end;
+    end;
+
+    local procedure DetermineTrainingEndDate(BeginDate: Date; NoOfDays: Integer) EndDate: Date
+    begin
+        EndDate := BeginDate;
+        while NoOfDays > 0 do begin
+            EndDate := CalcDate('1D', EndDate);
+            if not DetermineIfIsNonWorking(EndDate) then
+                NoOfDays -= 1;
+        end;
+    end;
+
+    local procedure DetermineIfIsNonWorking(bcDate: Date): Boolean
+    var
+        HRCalendar: Record "HR Calendar List";
+    begin
+        HRCalendar.Reset();
+        HRCalendar.SetRange(Date, bcDate);
+        if HRCalendar.FindFirst() then
+            exit(HRCalendar."Non Working");
+        exit(false);
     end;
 }

@@ -207,6 +207,10 @@ page 52194246 "HR Training Needs Card"
                         UpdateControls();
                     end;
                 }
+                field("Inclusive of Non Working Days"; "Inclusive of Non Working Days")
+                {
+                    ApplicationArea = all;
+                }
                 field("Captured By"; Rec."Captured By")
                 {
                     ApplicationArea = all;
