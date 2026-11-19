@@ -477,7 +477,7 @@ end; */
         if ApplicantUserId = '' then
             ApplicantUserId := UserId;
         if ApplicantUserId = '' then
-            ApplicantUserId := CopyStr(System.UserId(), 1, MaxStrLen(ApplicantUserId));
+            ApplicantUserId := CopyStr(UserId(), 1, MaxStrLen(ApplicantUserId));
 
         HREmployees.Reset();
         HREmployees.SetRange("User ID", ApplicantUserId);
