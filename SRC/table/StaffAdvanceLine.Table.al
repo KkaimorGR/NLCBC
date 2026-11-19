@@ -39,19 +39,19 @@ table 52193660 "Staff Advance Line"
                 PRPeriod.Reset();
                 PRPeriod.SetRange(PRPeriod."Employee Code", "Employee No");
                 PRPeriod.SetRange(PRPeriod."Transaction Code", 'GPAY');
-                PRPeriod.SetRange(PRPeriod."Payroll Period", ImprestHeader."Payroll Deduction Month");
+                PRPeriod.SetRange(PRPeriod."Payroll Period", CalcDate('-1M', ImprestHeader."Payroll Deduction Month"));
                 if PRPeriod.Find('-') then begin
                     "A Third Basic Pay" := Round(HrSetup."Basic Muiltipier" * PRPeriod.Amount, 0.01, '>');
                     "Gross Pay" := Round(PRPeriod.Amount, 0.01, '>');
                     "Emeployee Gross Pay" := "Gross Pay";
                 end;
                 if Amount > "A Third Basic Pay" then
-                    Error('The Salary advance Amount Requested is higher than 3 times your Gross Pay');
+                    Error('The Salary advance Amount Requested is higher than ' + format(HrSetup."Basic Muiltipier") + ' times your Gross Pay');
                 ImprestHeader.CalcFields("Payroll Deduction Month");
                 PRPeriod.Reset();
                 PRPeriod.SetRange(PRPeriod."Employee Code", "Employee No");
                 PRPeriod.SetRange(PRPeriod."Transaction Code", 'NPAY');
-                PRPeriod.SetRange(PRPeriod."Payroll Period", ImprestHeader."Payroll Deduction Month");
+                PRPeriod.SetRange(PRPeriod."Payroll Period", CalcDate('-1M', ImprestHeader."Payroll Deduction Month"));
                 if PRPeriod.Find('-') then
                     "Net Pay" := Round(PRPeriod.Amount, 0.01, '>');
 

@@ -21,6 +21,7 @@ page 52193762 "Salary Advance Request Crd"
                 field("No."; Rec."No.")
                 {
                     ApplicationArea = Basic;
+                    Editable = false;
                     ToolTip = 'Specifies the value of the No. field.';
                 }
                 field("Employee No"; Rec."Employee No")

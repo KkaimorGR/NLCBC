@@ -49,11 +49,7 @@ page 52193764 "Salary Advance Line"
                     ShowMandatory = true;
                     ToolTip = 'Specifies the value of the Payroll Deduct Month field.';
                 }
-                field("Responsibility Center"; Rec."Responsibility Center")
-                {
-                    ApplicationArea = Basic;
-                    ToolTip = 'Specifies the value of the Responsibility Center field.';
-                }
+
                 field(Amount; Rec.Amount)
                 {
                     ApplicationArea = Basic;

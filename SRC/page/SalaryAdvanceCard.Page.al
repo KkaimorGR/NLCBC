@@ -263,10 +263,17 @@ page 52193766 "Salary Advance Card"
             }
         }
     }
+    trigger OnOpenPage()
+    var
+        myInt: Integer;
+    begin
+        rec.CalcFields("Payroll Deduction Month");
+    end;
 
     trigger OnAfterGetRecord()
     begin
         //OnAfterGetCurrRecord;
+        rec.CalcFields("Payroll Deduction Month");
         CurrPageUpdate();
     end;
 

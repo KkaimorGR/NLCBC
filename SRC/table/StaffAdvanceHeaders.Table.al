@@ -778,6 +778,7 @@ table 52193601 "Staff Advance Headers"
     trigger OnInsert()
     var
         SalaryAdv: Record "Staff Advance Headers";
+        PRPayrollPeriod: Record "PR Payroll Periods";
     begin
 
         if "No." = '' then begin
@@ -791,6 +792,12 @@ table 52193601 "Staff Advance Headers"
         Cashier := UserId;
 
         "Loan Type" := "Loan Type"::"Salary Advance";
+
+        // Default the deduction period to the currently open payroll period
+        PRPayrollPeriod.Reset();
+        PRPayrollPeriod.SetRange(Closed, false);
+        if PRPayrollPeriod.FindFirst() then
+            Validate("Start Payroll Deduction Month", PRPayrollPeriod."Date Opened");
 
         // HREmp.Reset();
         // HREmp.SetRange(HREmp."User ID", UserId);
