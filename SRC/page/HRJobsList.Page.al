@@ -71,6 +71,17 @@ page 52193625 "HR Jobs List"
 
     actions { }
 
+    trigger OnOpenPage()
+    var
+        UserSet: Record "User Setup";
+    begin
+        UserSet.Reset();
+        UserSet.SetRange("User ID", UserId);
+        UserSet.SetRange("Edit HR Setup", true);
+        if UserSet.IsEmpty() then
+            Error('You do not have permission to view or create HR Jobs. Contact your system administrator to enable "Edit HR Setup" in User Setup.');
+    end;
+
     var
         VarVariant: Variant;
         CustomApprovals: Codeunit "Approvals Mgt";

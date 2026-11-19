@@ -57,4 +57,51 @@ page  50064 "HR Job Qualifications"
             }
         }
     }
+
+    trigger OnOpenPage()
+    begin
+        // Page is also the LookupPageId for "HR Job Qualifications", so lookups must keep working for everyone.
+        if not CurrPage.LookupMode() then
+            if not HasHRAccess() then
+                Error('You do not have permission to view or create HR Job Qualifications. Contact your system administrator to enable "Edit HR Setup" in User Setup.');
+    end;
+
+    trigger OnNewRecord(BelowxRec: Boolean)
+    begin
+        CheckHRAccess();
+    end;
+
+    trigger OnInsertRecord(BelowxRec: Boolean): Boolean
+    begin
+        CheckHRAccess();
+        exit(true);
+    end;
+
+    trigger OnModifyRecord(): Boolean
+    begin
+        CheckHRAccess();
+        exit(true);
+    end;
+
+    trigger OnDeleteRecord(): Boolean
+    begin
+        CheckHRAccess();
+        exit(true);
+    end;
+
+    local procedure HasHRAccess(): Boolean
+    var
+        UserSet: Record "User Setup";
+    begin
+        UserSet.Reset();
+        UserSet.SetRange("User ID", UserId);
+        UserSet.SetRange("Edit HR Setup", true);
+        exit(not UserSet.IsEmpty());
+    end;
+
+    local procedure CheckHRAccess()
+    begin
+        if not HasHRAccess() then
+            Error('You do not have permission to create or modify HR Job Qualifications. Contact your system administrator to enable "Edit HR Setup" in User Setup.');
+    end;
 }
