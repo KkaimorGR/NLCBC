@@ -394,7 +394,7 @@ table 52193660 "Staff Advance Line"
                 (ImprestHeader.Status = ImprestHeader.Status::Posted) then
                 //  OR
                 //   (ImprestHeader.Status=ImprestHeader.Status::"Pending Approval") THEN
-                Error('You Cannot Modify this record its status is not Pending');
+                Error('You Cannot Modify this record its status is not Open for edits');
 
             "Date Taken" := ImprestHeader.Date;
             //"Global Dimension 1 Code":=ImprestHeader."Global Dimension 1 Code";

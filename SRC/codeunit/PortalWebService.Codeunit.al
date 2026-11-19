@@ -2440,14 +2440,14 @@ codeunit 52193425 PortalWebService
             Error('Employee %1 not found.', EmployeeNo);
         SalaryAdv.Reset();
         SalaryAdv.SetRange("Employee No", EmployeeNo);
-        SalaryAdv.SetFilter(Status, '%1|%2', SalaryAdv.Status::Pending, SalaryAdv.Status::"Pending Approval");
+        SalaryAdv.SetRange(Status, SalaryAdv.Status::Pending);
         if SalaryAdv.FindFirst() then
             exit(SalaryAdv."No.");
 
         //Block if employee has an outstanding approved advance (same rule as header Employee No validation)
         OutstandingAdv.Reset();
         OutstandingAdv.SetRange("Employee No", EmployeeNo);
-        OutstandingAdv.SetRange(Status, OutstandingAdv.Status::Approved);
+        OutstandingAdv.SetFilter(Status, '%1|%2', OutstandingAdv.Status::Approved, OutstandingAdv.Status::"Pending Approval");
         if OutstandingAdv.FindFirst() then begin
             OutstandingAdv.CalcFields("Payroll Deduction Month");
             if OutstandingAdv."Payroll Deduction Month" <> 0D then

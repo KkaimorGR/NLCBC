@@ -442,7 +442,7 @@ page 52193618 "HR Jobs Card"
         UserSet.SetRange("User ID", UserId);
         UserSet.SetRange("Edit HR Setup", true);
         if UserSet.IsEmpty() then
-            Error('You do not have permission to create HR Jobs. Contact your system administrator to enable "Edit HR Setup" in User Setup.');
+            Error('You do not have permission to create HR Jobs.');
     end;
 
     var

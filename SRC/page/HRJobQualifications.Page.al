@@ -63,7 +63,7 @@ page  50064 "HR Job Qualifications"
         // Page is also the LookupPageId for "HR Job Qualifications", so lookups must keep working for everyone.
         if not CurrPage.LookupMode() then
             if not HasHRAccess() then
-                Error('You do not have permission to view or create HR Job Qualifications. Contact your system administrator to enable "Edit HR Setup" in User Setup.');
+                Error('You do not have permission to HR Qualification.');
     end;
 
     trigger OnNewRecord(BelowxRec: Boolean)
@@ -102,6 +102,6 @@ page  50064 "HR Job Qualifications"
     local procedure CheckHRAccess()
     begin
         if not HasHRAccess() then
-            Error('You do not have permission to create or modify HR Job Qualifications. Contact your system administrator to enable "Edit HR Setup" in User Setup.');
+            Error('You do not have permission to HR Qualification.');
     end;
 }
