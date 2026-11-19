@@ -852,7 +852,7 @@ page 52193735 "prPayroll Role Center"
                     ApplicationArea = Basic;
                     Caption = 'Open Salary Advance Request';
                     RunObject = page "Salary Advance Request Lists";
-                    RunPageLink = Status = filter(Pending);
+                    RunPageLink = Status = filter(Open);
                     ToolTip = 'Executes the Salary Advance Request action.';
                 }
                 action("Pending Approval Staff Advance Requests")

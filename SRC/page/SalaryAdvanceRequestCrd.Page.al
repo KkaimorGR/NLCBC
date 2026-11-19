@@ -143,7 +143,7 @@ page 52193762 "Salary Advance Request Crd"
                         CustomApprovals: Codeunit "Approvals Mgt";
                     //ApprovalMgt: Codeunit "Export F/O Consolidation";
                     begin
-                        Rec.TestField(Status, Rec.Status::Pending);
+                        Rec.TestField(Status, Rec.Status::Open);
 
                         if not LinesExists() then
                             Error('There are no Lines created for this Document');
@@ -182,7 +182,7 @@ page 52193762 "Salary Advance Request Crd"
                         CustomApprovals: Codeunit "Approvals Mgt";
 
                     begin
-                        if Rec.Status = Rec.Status::Pending then
+                        if Rec.Status = Rec.Status::Open then
                             Error('Status should not be %1', Rec.Status);
                         AppraisaComme.Reset();
                         AppraisaComme.SetRange(AppraisaComme."Sal No.", Rec."No.");
@@ -533,7 +533,7 @@ page 52193762 "Salary Advance Request Crd"
             //CurrPage.UpdateControls();
         end;
 
-        if Rec.Status = Rec.Status::Pending then begin
+        if Rec.Status = Rec.Status::Open then begin
             GlobalDimension1CodeEditable := true;
             ShortcutDimension2CodeEditable := true;
             //CurrForm.Payee.EDITABLE:=TRUE;
@@ -557,7 +557,7 @@ page 52193762 "Salary Advance Request Crd"
             //CurrPage.UpdateControls();
         end;
 
-        if (Rec.Status = Rec.Status::Posted) or (Rec.Status = Rec.Status::Cancelled) then begin
+        if (Rec.Status = Rec.Status::Rejected) then begin
             "Payment Release DateEditable" := false;
             "Paying Bank AccountEditable" := false;
             "Pay ModeEditable" := false;
@@ -573,7 +573,7 @@ page 52193762 "Salary Advance Request Crd"
             //CurrForm."Currency Code".EDITABLE:=TRUE;
             //CurrPage.UpdateControls();
         end;
-        if rec.Status <> rec.Status::Pending then
+        if rec.Status <> rec.Status::Open then
             CheckEdits := false
         else
             CheckEdits := true;

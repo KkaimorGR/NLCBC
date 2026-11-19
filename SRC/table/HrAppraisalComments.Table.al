@@ -78,7 +78,7 @@ table 52194151 "HR Appraisal Comments"
         StaffAd.Reset();
         StaffAd.SetRange("No.", Rec."Sal No.");
         if StaffAd.FindFirst() then begin
-            if StaffAd.Status <> StaffAd.Status::Pending then
+            if StaffAd.Status <> StaffAd.Status::Open then
                 Error('You  cannot delete comments when the Advance status is %1', StaffAd.Status);
             if Rec.Commented = true then
                 Error('You cannot deleted this comment because the process was initiated');
@@ -94,7 +94,7 @@ table 52194151 "HR Appraisal Comments"
         StaffAd.Reset();
         StaffAd.SetRange("No.", Rec."Sal No.");
         if StaffAd.FindFirst() then begin
-            if StaffAd.Status <> StaffAd.Status::Pending then
+            if StaffAd.Status <> StaffAd.Status::Open then
                 Error('You  cannot delete comments when the Advance status is %1', StaffAd.Status);
             if Rec.Commented = true then
                 Error('You cannot Modify this comment because the process was initiated');

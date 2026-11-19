@@ -260,6 +260,15 @@ table 52193660 "Staff Advance Line"
         field(50007; "Employee No"; Code[20])
         {
             Caption = 'Employee No';
+            trigger OnValidate()
+            var
+                myInt: Integer;
+                HrEmploy: Record "HR Employees";
+            begin
+                if HrEmploy.Get("Employee No") then
+                    rec."Employee Name" := HrEmploy."Full Name";
+
+            end;
         }
         field(50008; "Employee Name"; Text[100])
         {
@@ -340,7 +349,7 @@ table 52193660 "Staff Advance Line"
         ImprestHeader.SetRange(ImprestHeader."No.", No);
         if ImprestHeader.FindFirst() then
             if (ImprestHeader.Status = ImprestHeader.Status::Approved) or
-            (ImprestHeader.Status = ImprestHeader.Status::Posted) or
+            (ImprestHeader.Status = ImprestHeader.Status::Rejected) or
             (ImprestHeader.Status = ImprestHeader.Status::"Pending Approval") then
                 Error('You Cannot Delete this record its status is not Pending');
 
@@ -391,7 +400,7 @@ table 52193660 "Staff Advance Line"
         if ImprestHeader.FindFirst() then begin
             if
              (ImprestHeader.Status = ImprestHeader.Status::Approved) or
-                (ImprestHeader.Status = ImprestHeader.Status::Posted) then
+                (ImprestHeader.Status = ImprestHeader.Status::Rejected) then
                 //  OR
                 //   (ImprestHeader.Status=ImprestHeader.Status::"Pending Approval") THEN
                 Error('You Cannot Modify this record its status is not Open for edits');

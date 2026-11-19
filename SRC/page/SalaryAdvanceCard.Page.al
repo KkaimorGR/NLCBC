@@ -214,7 +214,7 @@ page 52193766 "Salary Advance Card"
                     begin
 
                         Rec.TestField(Status, Rec.Status::Approved);
-                        if (Rec.Status = Rec.Status::Pending) or (Rec.Status = Rec.Status::Cancelled) or (Rec.Status = Rec.Status::"Pending Approval") then
+                        if (Rec.Status = Rec.Status::Approved) or (Rec.Status = Rec.Status::"Pending Approval") then
                             Error('You can not print a document that is %1', Rec.Status);
                         Rec.Reset();
                         Rec.SetFilter("No.", Rec."No.");
@@ -236,7 +236,7 @@ page 52193766 "Salary Advance Card"
                     begin
 
                         Rec.TestField(Status, Rec.Status::Approved);
-                        if (Rec.Status = Rec.Status::Pending) or (Rec.Status = Rec.Status::Cancelled) or (Rec.Status = Rec.Status::"Pending Approval") then
+                        if (Rec.Status = Rec.Status::Approved) or (Rec.Status = Rec.Status::"Pending Approval") then
                             Error('You can not print a document that is %1', Rec.Status);
                         Rec.Reset();
                         Rec.SetFilter("No.", Rec."No.");
@@ -285,7 +285,7 @@ page 52193766 "Salary Advance Card"
         TravReqHeader.Reset();
         //TravAccHeader.SETRANGE(SaleHeader."Document Type",SaleHeader."Document Type"::"Cash Sale");
         TravReqHeader.SetRange(TravReqHeader.Cashier, UserId);
-        TravReqHeader.SetRange(TravReqHeader.Status, Rec.Status::Pending);
+        TravReqHeader.SetRange(TravReqHeader.Status, Rec.Status::Open);
         /*
             IF TravReqHeader.COUNT>0 THEN
               BEGIN
@@ -313,7 +313,7 @@ page 52193766 "Salary Advance Card"
         //check for pending documents
         StaffAdvance.Reset();
         StaffAdvance.SetRange(StaffAdvance.Cashier, UserId);
-        StaffAdvance.SetFilter(StaffAdvance.Status, '%1|%2', StaffAdvance.Status::Pending, StaffAdvance.Status::"Pending Approval");
+        StaffAdvance.SetFilter(StaffAdvance.Status, '%1|%2', StaffAdvance.Status::Open, StaffAdvance.Status::"Pending Approval");
         if StaffAdvance.Count > 0 then
             Error('There are still some pending document(s) on your account. Please list & select the pending document to use.  ');
 
@@ -549,7 +549,7 @@ page 52193766 "Salary Advance Card"
             //CurrPage.UpdateControls();
         end;
 
-        if Rec.Status = Rec.Status::Pending then begin
+        if Rec.Status = Rec.Status::Open then begin
             GlobalDimension1CodeEditable := true;
             ShortcutDimension2CodeEditable := true;
             //CurrForm.Payee.EDITABLE:=TRUE;
@@ -573,7 +573,7 @@ page 52193766 "Salary Advance Card"
             //CurrPage.UpdateControls();
         end;
 
-        if (Rec.Status = Rec.Status::Posted) or (Rec.Status = Rec.Status::Cancelled) then begin
+        if (Rec.Status = Rec.Status::Rejected) then begin
             "Payment Release DateEditable" := false;
             "Paying Bank AccountEditable" := false;
             "Pay ModeEditable" := false;

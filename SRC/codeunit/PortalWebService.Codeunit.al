@@ -2393,7 +2393,7 @@ codeunit 52193425 PortalWebService
             Error('Salary Advance %1 not found.', DocNo);
         if SalaryAdv."Employee No" <> EmployeeNo then
             Error('Salary Advance %1 does not belong to employee %2.', DocNo, EmployeeNo);
-        if SalaryAdv.Status <> SalaryAdv.Status::Pending then
+        if SalaryAdv.Status <> SalaryAdv.Status::Open then
             Error('Salary Advance %1 cannot be modified because its status is %2.', DocNo, SalaryAdv.Status);
 
         //Header
@@ -2440,7 +2440,7 @@ codeunit 52193425 PortalWebService
             Error('Employee %1 not found.', EmployeeNo);
         SalaryAdv.Reset();
         SalaryAdv.SetRange("Employee No", EmployeeNo);
-        SalaryAdv.SetRange(Status, SalaryAdv.Status::Pending);
+        SalaryAdv.SetRange(Status, SalaryAdv.Status::Open);
         if SalaryAdv.FindFirst() then
             exit(SalaryAdv."No.");
 

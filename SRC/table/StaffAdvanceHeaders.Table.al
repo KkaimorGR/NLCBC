@@ -152,7 +152,7 @@ table 52193601 "Staff Advance Headers"
         field(35; Status; Option)
         {
             Description = 'Stores the status of the record in the database';
-            OptionMembers = Pending,"1st Approval","2nd Approval","Cheque Printing",Posted,Cancelled,Checking,VoteBook,"Pending Approval",Approved,Rejected;
+            OptionMembers = Open,"Pending Approval",Approved,Rejected;
             Caption = 'Status';
             OptionCaption = 'Open,"1st Approval","2nd Approval","Cheque Printing",Posted,Cancelled,Checking,VoteBook,"Pending Approval",Approved,Rejected';
             Editable = false;
@@ -819,7 +819,7 @@ table 52193601 "Staff Advance Headers"
 
     trigger OnDelete()
     begin
-        if Status <> Status::Pending then
+        if Status <> Status::Open then
             Error(DeleteNotAllowedErr, "No.", Status);
     end;
 
