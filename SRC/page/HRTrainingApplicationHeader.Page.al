@@ -249,6 +249,7 @@ page 52194249 "HR Training Application Header"
                         TrainiPa: Record "HR Training App Lines";
                     begin
                         Rec.TestField(Duration);
+                        Rec.InsertIndividualParticipant('');
                         TrainiPa.Reset();
                         TrainiPa.SetRange("Application No.", Rec."Application No");
                         if not TrainiPa.FindFirst() then

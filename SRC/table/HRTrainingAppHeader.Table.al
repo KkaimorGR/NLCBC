@@ -460,5 +460,37 @@ end; */
         if "Actual Start Date" <> 0D then
             "Actual End Date" := CalcDate("Actual Duration", "Actual Start Date");
     end;
+
+    procedure InsertIndividualParticipant(ApplicantUserId: Code[50])
+    var
+        HREmployees: Record "HR Employees";
+        TrainingLine: Record "HR Training App Lines";
+    begin
+        if Training_Category <> Training_Category::Individual then
+            exit;
+
+        TrainingLine.Reset();
+        TrainingLine.SetRange("Application No.", "Application No");
+        if not TrainingLine.IsEmpty() then
+            exit;
+
+        if ApplicantUserId = '' then
+            ApplicantUserId := UserId;
+        if ApplicantUserId = '' then
+            ApplicantUserId := CopyStr(System.UserId(), 1, MaxStrLen(ApplicantUserId));
+
+        HREmployees.Reset();
+        HREmployees.SetRange("User ID", ApplicantUserId);
+        if not HREmployees.FindFirst() then
+            Error('User %1 is not linked to any employee in HR Employees.', ApplicantUserId);
+
+        TrainingLine.Init();
+        TrainingLine."Application No." := "Application No";
+        TrainingLine."Employee No." := HREmployees."No.";
+        TrainingLine.Name := CopyStr(HREmployees."Full Name", 1, MaxStrLen(TrainingLine.Name));
+        TrainingLine."Job Title" := CopyStr(HREmployees."Job ID", 1, MaxStrLen(TrainingLine."Job Title"));
+        TrainingLine."Job Description" := CopyStr(HREmployees."Job Title", 1, MaxStrLen(TrainingLine."Job Description"));
+        TrainingLine.Insert(true);
+    end;
 }
 

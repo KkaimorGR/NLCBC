@@ -33,7 +33,7 @@ table 52193557 "HR Training App Lines"
                     Traininglines.Reset();
                     Traininglines.SetRange("Application No.", TRainHngheader."Application No");
                     if Traininglines.FindFirst() then
-                        if Traininglines.Count >= 1 then
+                        if Traininglines.Count > 1 then
                             Error('For individual tranings only one person is required on  the lines');
                 end;
                 HREmployees.Reset();

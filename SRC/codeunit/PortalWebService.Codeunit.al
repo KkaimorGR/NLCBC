@@ -691,6 +691,7 @@ codeunit 52193425 PortalWebService
         TrainingApplications.Reset();
         TrainingApplications.SetRange(TrainingApplications."Application No", ApplicationNo);
         if TrainingApplications.Find('-') then begin
+            TrainingApplications.InsertIndividualParticipant(CopyStr(TrainingApplications."Created by", 1, 50));
             VarVariant := TrainingApplications;
             ApprovalMgt.OnSendDocForApproval(VarVariant);
             // Message('XYZ');
