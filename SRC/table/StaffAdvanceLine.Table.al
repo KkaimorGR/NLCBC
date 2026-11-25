@@ -56,7 +56,7 @@ table 52193660 "Staff Advance Line"
 
                 "A Third Basic Pay" := Round(HrSetup."Basic Muiltipier" * "Gross Pay", 0.01, '>');
                 if Amount > "A Third Basic Pay" then
-                    Error('The Salary advance Amount Requested is higher than ' + format(HrSetup."Basic Muiltipier") + ' times your Basic Pay');
+                    Error('The Salary advance Amount Requested is higher than ' + format(HrSetup."Basic Muiltipier") + ' times your Gross Pay');
 
                 ImprestHeader.CalcFields("Payroll Deduction Month");
                 PRPeriod.Reset();
